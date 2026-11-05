@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mjera — shelving made to measure in Montenegro</title>
+  <meta name="description" content="Design your own shelving online. Download the cut files and build it yourself, or let us cut, drill, check, deliver and assemble it anywhere in Montenegro.">
+  <meta name="theme-color" content="#f6f3ee">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f1e1b'/%3E%3Cpath d='M8 9h16M8 16h16M8 23h16M8 9v14M24 9v14M16 9v7M13 16v7' stroke='%23e6cfa6' stroke-width='2.4'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="logo" href="#top" aria-label="Mjera home">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7"/><path d="M8 9h16M8 16h16M8 23h16M8 9v14M24 9v14M16 9v7M13 16v7"/></svg>
+      <span>mjera</span>
+    </a>
+    <nav class="nav">
+      <a href="#configure">Design</a>
+      <a href="#how">How it works</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <a class="btn btn-small btn-dark" href="#configure">Start designing</a>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">Po mjeri · made to measure · Montenegro</p>
+        <h1>Shelving you design.<br><em>Cut, drilled and built</em> by us.</h1>
+        <p class="lede">Pick a style, drag it to fit your wall, and see the price change as you go. Download the cut files and build it yourself, or let our workshop cut, drill, check, deliver and assemble it anywhere from Herceg Novi to Žabljak.</p>
+        <div class="hero-ctas">
+          <a class="btn btn-dark" href="#configure">Design your shelf</a>
+          <a class="btn btn-ghost" href="#how">See how it works</a>
+        </div>
+        <ul class="hero-facts">
+          <li><strong>CNC</strong><span>cut &amp; drilled panels</span></li>
+          <li><strong>2–3 weeks</strong><span>from order to your door</span></li>
+          <li><strong>€<span id="hero-export-price">29</span></strong><span>for DIY cut files</span></li>
+        </ul>
+      </div>
+      <div class="hero-visual" id="hero-visual" aria-hidden="true"></div>
+    </section>
+
+    <section id="configure" class="configurator" aria-label="Shelf designer">
+      <div class="stage">
+        <div class="stage-top">
+          <div class="tabs" role="tablist">
+            <button role="tab" class="tab is-active" data-view="design" aria-selected="true">Design</button>
+            <button role="tab" class="tab" data-view="cutlist" aria-selected="false">Cut list</button>
+            <button role="tab" class="tab" data-view="sheets" aria-selected="false">Sheets</button>
+          </div>
+          <div class="readout" id="readout">—</div>
+        </div>
+
+        <div class="view is-active" id="view-design">
+          <div class="preview" id="preview"></div>
+          <p class="hint"><span class="dot"></span>Tap a compartment to add or remove a door.</p>
+        </div>
+        <div class="view" id="view-cutlist"></div>
+        <div class="view" id="view-sheets"></div>
+
+        <ul class="warnings" id="warnings"></ul>
+      </div>
+
+      <aside class="panel">
+        <div class="group">
+          <h2 class="group-title">Style</h2>
+          <div class="styles" id="styles"></div>
+        </div>
+
+        <div class="group">
+          <h2 class="group-title">Size</h2>
+          <div class="field">
+            <label for="width">Width</label>
+            <div class="range-row"><input type="range" id="width"><output id="width-out"></output></div>
+          </div>
+          <div class="field">
+            <label for="height">Height</label>
+            <div class="range-row"><input type="range" id="height"><output id="height-out"></output></div>
+          </div>
+          <div class="field">
+            <span class="label">Depth</span>
+            <div class="seg" id="depth"></div>
+          </div>
+          <div class="field">
+            <label for="rows">Rows</label>
+            <div class="range-row"><input type="range" id="rows" step="1"><output id="rows-out"></output></div>
+          </div>
+          <div class="field">
+            <label for="density">Density</label>
+            <div class="range-row"><input type="range" id="density" min="0" max="100" step="1"><output id="density-out"></output></div>
+          </div>
+          <button class="btn btn-ghost btn-small shuffle" id="shuffle" type="button" hidden>↻ Shuffle pattern</button>
+        </div>
+
+        <div class="group">
+          <h2 class="group-title">Material</h2>
+          <div class="seg seg-wide" id="material"></div>
+          <p class="note" id="material-desc"></p>
+          <div class="swatches" id="colors"></div>
+          <p class="note" id="color-name"></p>
+        </div>
+
+        <div class="group">
+          <h2 class="group-title">Details</h2>
+          <label class="switch"><input type="checkbox" id="back"><span>Back panels</span></label>
+          <div class="field">
+            <span class="label">Base</span>
+            <div class="seg" id="base">
+              <button type="button" data-v="none">None</button>
+              <button type="button" data-v="plinth">Plinth</button>
+              <button type="button" data-v="legs">Legs</button>
+            </div>
+          </div>
+          <button class="link" id="clear-doors" type="button">Remove all doors</button>
+        </div>
+
+        <div class="group price-card">
+          <div class="option">
+            <div>
+              <h3>Build it yourself</h3>
+              <p class="note">Cut list, drilling map, sheet layouts &amp; hardware list. Take them to any panel shop.</p>
+            </div>
+            <div class="option-price">€<span id="price-export"></span></div>
+          </div>
+          <button class="btn btn-ghost btn-block" id="btn-export" type="button">Get cut files</button>
+
+          <hr>
+
+          <div class="option">
+            <div>
+              <h3>Made for you</h3>
+              <p class="note">We order the boards, CNC cut &amp; drill, check every part and pack it labelled.</p>
+            </div>
+            <div class="option-price">€<span id="price-made"></span></div>
+          </div>
+          <details class="breakdown">
+            <summary>Price breakdown</summary>
+            <dl id="breakdown"></dl>
+          </details>
+          <div class="field">
+            <label for="delivery">Delivery</label>
+            <select id="delivery"></select>
+          </div>
+          <label class="switch"><input type="checkbox" id="assembly"><span>Assembly at your home <em id="assembly-price"></em></span></label>
+          <div class="total">
+            <span>Total incl. VAT</span>
+            <strong>€<span id="price-total"></span></strong>
+          </div>
+          <button class="btn btn-dark btn-block" id="btn-order" type="button">Order this shelf</button>
+          <button class="link" id="btn-share" type="button">Copy link to this design</button>
+        </div>
+      </aside>
+    </section>
+
+    <section id="how" class="section">
+      <p class="eyebrow">How it works</p>
+      <h2 class="section-title">From slider to wall in four steps</h2>
+      <ol class="steps">
+        <li><span class="step-n">01</span><h3>Design</h3><p>Choose a style and adjust width, height, depth, rows and density. Add doors where you want them. The price updates live.</p></li>
+        <li><span class="step-n">02</span><h3>Cut &amp; drill</h3><p>Your design becomes a precise cut list and drilling map. We order the boards and machine every panel on CNC.</p></li>
+        <li><span class="step-n">03</span><h3>Quality check</h3><p>Each part is measured, edge-checked and labelled with its ID, then test-fitted before it is packed.</p></li>
+        <li><span class="step-n">04</span><h3>Deliver &amp; assemble</h3><p>We bring it to your door anywhere in Montenegro, and can assemble it and fix it to the wall.</p></li>
+      </ol>
+    </section>
+
+    <section id="pricing" class="section">
+      <p class="eyebrow">Pricing</p>
+      <h2 class="section-title">Two ways to get your shelf</h2>
+      <div class="plans">
+        <article class="plan">
+          <h3>Cut files</h3>
+          <p class="plan-price">€<span id="plan-export-price">29</span> <small>per design</small></p>
+          <ul>
+            <li>Cut list (CSV) with grain direction &amp; edging</li>
+            <li>Drilling map for every hole</li>
+            <li>Optimised sheet layouts</li>
+            <li>Assembly drawing with part IDs</li>
+            <li>Hardware shopping list</li>
+          </ul>
+          <a class="btn btn-ghost btn-block" href="#configure">Design &amp; download</a>
+        </article>
+        <article class="plan plan-featured">
+          <h3>Made for you</h3>
+          <p class="plan-price">Live quote <small>shown as you design</small></p>
+          <ul>
+            <li>Boards, finish &amp; hardware included</li>
+            <li>CNC cutting &amp; drilling</li>
+            <li>Quality check &amp; labelled parts</li>
+            <li>Delivery from €0 (pickup) to €70 (north)</li>
+            <li>Optional assembly &amp; wall fixing</li>
+          </ul>
+          <a class="btn btn-dark btn-block" href="#configure">Get your price</a>
+        </article>
+      </div>
+    </section>
+
+    <section id="faq" class="section faq">
+      <p class="eyebrow">Questions</p>
+      <h2 class="section-title">Good to know</h2>
+      <details><summary>Can I take the cut files to my own carpenter?</summary><p>Yes, that's what they're for. The CSV opens in Excel and imports into most panel-saw optimisers. The drilling map gives every hole relative to the part's front edge.</p></details>
+      <details><summary>How accurate is the online price?</summary><p>It's calculated from the actual sheets, cut length, holes and hardware your design needs. We confirm the final price before you pay. It only changes if something in the design has to change.</p></details>
+      <details><summary>How long does it take?</summary><p>Usually 2–3 weeks: about a week for boards and machining, a few days for checking and packing, then delivery on a date that suits you.</p></details>
+      <details><summary>Is it safe for tall shelves?</summary><p>Every order includes an anti-tip wall bracket kit. If we assemble, we fix it to the wall for you.</p></details>
+      <details><summary>Do you deliver outside Montenegro?</summary><p>Not yet. Cut files work anywhere, though.</p></details>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="logo logo-footer"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7"/><path d="M8 9h16M8 16h16M8 23h16M8 9v14M24 9v14M16 9v7M13 16v7"/></svg><span>mjera</span></div>
+    <p>Furniture made to measure, from Montenegro. · <a id="footer-mail" href="#">orders@mjera.me</a></p>
+  </footer>
+
+  <dialog id="dlg-export" class="dialog">
+    <form method="dialog" class="dialog-inner">
+      <button class="dialog-close" value="cancel" aria-label="Close">×</button>
+      <p class="eyebrow">Build it yourself</p>
+      <h2>Your cut-file package</h2>
+      <ul class="file-list">
+        <li><b>cutlist.csv</b> <span id="x-parts"></span></li>
+        <li><b>drilling.csv</b> <span id="x-holes"></span></li>
+        <li><b>sheets.svg</b> <span id="x-sheets"></span></li>
+        <li><b>front-elevation.svg</b> assembly drawing with part IDs</li>
+        <li><b>hardware.csv</b> screws, hinges, latches</li>
+        <li><b>project.json</b> re-open this design any time</li>
+      </ul>
+      <p class="demo-note" id="demo-note" hidden>Demo mode: payment isn't connected yet, so the download is free.</p>
+      <button class="btn btn-dark btn-block" id="btn-pay" value="default" type="button">Pay €<span id="x-price"></span> &amp; download</button>
+    </form>
+  </dialog>
+
+  <dialog id="dlg-order" class="dialog">
+    <form class="dialog-inner" id="order-form">
+      <button class="dialog-close" type="button" data-close aria-label="Close">×</button>
+      <p class="eyebrow">Made for you</p>
+      <h2>Request your order</h2>
+      <pre class="order-summary" id="order-summary"></pre>
+      <div class="form-grid">
+        <label>Name<input name="name" required autocomplete="name"></label>
+        <label>Phone<input name="phone" required type="tel" autocomplete="tel"></label>
+        <label>Email<input name="email" type="email" autocomplete="email"></label>
+        <label>Town<input name="city" required autocomplete="address-level2"></label>
+        <label class="full">Address<input name="address" autocomplete="street-address"></label>
+        <label class="full">Notes<textarea name="notes" rows="2" placeholder="Floor, lift, skirting board, wall type…"></textarea></label>
+      </div>
+      <p class="note">No payment now. We'll confirm the final price and delivery date within one working day.</p>
+      <div class="dialog-actions">
+        <button class="btn btn-dark" type="submit" data-via="email">Send by email</button>
+        <button class="btn btn-ghost" type="submit" data-via="whatsapp">Send on WhatsApp</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" defer></script>
+  <script src="js/config.js" defer></script>
+  <script src="js/layout.js" defer></script>
+  <script src="js/cutlist.js" defer></script>
+  <script src="js/nesting.js" defer></script>
+  <script src="js/pricing.js" defer></script>
+  <script src="js/preview.js" defer></script>
+  <script src="js/export.js" defer></script>
+  <script src="js/app.js" defer></script>
+</body>
+</html>
