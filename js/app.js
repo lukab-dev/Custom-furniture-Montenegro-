@@ -10,6 +10,7 @@
   };
 
   let state = loadState();
+  const ui = { dims: true, person: true };   // view-only toggles, not saved in the link
   let model = null;
 
   // ---------- state & URL ----------
@@ -110,14 +111,33 @@
     $$('[data-close]').forEach(b => b.addEventListener('click', () => b.closest('dialog').close()));
     $$('dialog').forEach(d => d.addEventListener('click', e => { if (e.target === d) d.close(); }));
 
-    // Mobile: one option group at a time under the pinned preview
+    // Mobile: one setting at a time under the pinned preview
     $('#ctrl-tabs').addEventListener('click', e => {
-      const b = e.target.closest('[data-group]'); if (!b) return;
-      setGroup(b.dataset.group);
+      const b = e.target.closest('[data-p]'); if (!b) return;
+      setParam(b.dataset.p);
+      b.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
       const top = $('#configure').getBoundingClientRect().top + window.scrollY - headerHeight();
       if (window.scrollY > top + 2) window.scrollTo({ top, behavior: 'smooth' });
     });
-    setGroup('style');
+    setParam('width');
+
+    // − / + steppers
+    $('.panel').addEventListener('click', e => {
+      const b = e.target.closest('.step'); if (!b) return;
+      const input = $('#' + b.dataset.for);
+      const v = Math.min(Number(input.max), Math.max(Number(input.min), Number(input.value) + Number(b.dataset.d)));
+      set({ [b.dataset.for]: v });
+    });
+
+    // Preview tools
+    const toggle = (btn, key) => btn.addEventListener('click', () => {
+      ui[key] = !ui[key]; btn.setAttribute('aria-pressed', ui[key]); set({});
+    });
+    toggle($('#tg-person'), 'person');
+    toggle($('#tg-dims'), 'dims');
+    $('#pv-share').addEventListener('click', () => copy(shareUrl(), 'Link copied — share or bookmark it.'));
+    $('#btn-parts').addEventListener('click', () => { showParts('cutlist'); $('#dlg-parts').showModal(); });
+    $('#parts-tabs').addEventListener('click', e => { const b = e.target.closest('[data-v]'); if (b) showParts(b.dataset.v); });
     $('#mbar-files').addEventListener('click', openExport);
     $('#mbar-order').addEventListener('click', openOrder);
     if ('IntersectionObserver' in window) {
@@ -158,9 +178,13 @@
     const h = document.querySelector('.site-header');
     return getComputedStyle(h).position === 'sticky' ? h.offsetHeight : 0;
   }
-  function setGroup(g) {
-    $$('#ctrl-tabs [data-group]').forEach(b => { b.classList.toggle('is-on', b.dataset.group === g); b.setAttribute('aria-selected', b.dataset.group === g); });
-    $$('.panel .group').forEach(el => el.classList.toggle('is-current', el.dataset.group === g));
+  function setParam(k) {
+    $$('#ctrl-tabs [data-p]').forEach(b => { b.classList.toggle('is-on', b.dataset.p === k); b.setAttribute('aria-selected', b.dataset.p === k); });
+    $$('.panel [data-p]').forEach(el => el.classList.toggle('is-current', el.dataset.p === k));
+  }
+  function showParts(v) {
+    $$('#parts-tabs [data-v]').forEach(b => b.classList.toggle('is-active', b.dataset.v === v));
+    $('#parts-body').innerHTML = $('#view-' + v).innerHTML;
   }
 
   function seg(sel, onPick) {
@@ -200,7 +224,7 @@
     $('#delivery').value = s.delivery;
     $('#clear-doors').hidden = !s.doors.length;
 
-    $('#preview').innerHTML = MJERA.preview.shelf(design, cut, { interactive: true, dims: true });
+    $('#preview').innerHTML = MJERA.preview.shelf(design, cut, { interactive: true, dims: ui.dims, person: ui.person });
     $('#readout').textContent = `${s.width} × ${s.height} × ${s.depth} cm`;
     $('#warnings').innerHTML = design.warnings.concat(nest.flatMap(g => g.oversize.map(p => `${p.id} (${p.L}×${p.Wd}) doesn't fit on a stock sheet.`)))
       .map(w => `<li>${w}</li>`).join('');
@@ -214,8 +238,13 @@
     $('#assembly-price').textContent = '+€' + Math.round(C.pricing.assembly.base + cut.parts.length * C.pricing.assembly.perPart);
     $('#price-total').textContent = price.total;
     $('#mbar-total').textContent = price.total;
-    $('#mbar-asm').textContent = s.assembly ? 'Delivered & assembled' : 'Delivered';
     $('#mbar-files-price').textContent = price.exportPackage;
+    $('#pv-total').textContent = price.total;
+    $('#pv-sub').textContent = `${s.width} × ${s.height} × ${s.depth} cm · ${s.assembly ? 'delivered & assembled' : 'delivered'}`;
+    $$('.step').forEach(b => {
+      const input = $('#' + b.dataset.for);
+      b.disabled = input.disabled || (Number(b.dataset.d) < 0 ? Number(input.value) <= Number(input.min) : Number(input.value) >= Number(input.max));
+    });
 
     try { history.replaceState(null, '', '#d=' + encode(state).replace(/\+/g, '-').replace(/\//g, '_')); } catch (e) { /* file:// */ }
   }

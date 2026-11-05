@@ -24,7 +24,10 @@
     const ply = material.id === 'ply';
     const edge = ply ? (color.edge || '#d6b886') : c;
     const pad = opts.mini ? 40 : Math.max(W, H) * 0.14;
-    const vbX = -pad, vbY = -pad, vbW = W + pad * 2, vbH = H + pad * 1.6;
+    const PX = -420;                          // person stands left of the shelf (centre x, mm)
+    const left = opts.person ? Math.min(-pad, PX - 300) : -pad;
+    const vbY = opts.person ? Math.min(-pad, H - 1800) : -pad;   // keep the person's head in view
+    const vbX = left, vbW = W + pad - left, vbH = H + pad * 0.6 - vbY;
     const Y = y => H - y;                     // floor coords -> svg
     const f = 3400, k = f / (f + D);
     const vx = W / 2, vy = Math.min(1500, H + 350);
@@ -42,6 +45,15 @@
     out.push('</defs>');
 
     if (!opts.mini) out.push(`<ellipse cx="${W / 2}" cy="${Y(0)}" rx="${W * 0.62}" ry="${Math.max(30, D * 0.18)}" fill="url(#${P}floorShadow)"/>`);
+
+    // Person for scale (1.75 m)
+    if (opts.person) {
+      const half = [[45, 1505], [180, 1440], [228, 1370], [252, 1010], [222, 815], [190, 815], [192, 1000], [168, 1270],
+        [158, 960], [140, 520], [128, 70], [150, 0], [40, 0], [44, 70], [24, 860], [0, 885]];
+      const body = half.concat(half.slice().reverse().map(([x, y]) => [-x, y]));
+      out.push(`<g fill="#b9b1a4" opacity=".55"><ellipse cx="${PX}" cy="${Y(1638)}" rx="92" ry="112"/>` +
+        `<polygon points="${pts(body.map(([x, y]) => [PX + x, Y(y)]))}"/></g>`);
+    }
 
     // Base
     if (state.base === 'plinth') {

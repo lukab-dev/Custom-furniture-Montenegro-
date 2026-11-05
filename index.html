@@ -58,7 +58,27 @@
         </div>
 
         <div class="view is-active" id="view-design">
-          <div class="preview" id="preview"></div>
+          <div class="preview-wrap">
+            <div class="preview" id="preview"></div>
+            <div class="pv-price" aria-live="polite">
+              <strong>€<span id="pv-total"></span></strong>
+              <small id="pv-sub"></small>
+            </div>
+            <div class="pv-tools">
+              <button type="button" class="pv-btn" id="tg-person" aria-pressed="true" title="Person for scale" aria-label="Show person for scale">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="4.5" r="2.2"/><path d="M8.5 21v-7.5L7 13V9.2c0-1.2 1-2.2 2.2-2.2h5.6c1.2 0 2.2 1 2.2 2.2V13l-1.5.5V21M12 14v7"/></svg>
+              </button>
+              <button type="button" class="pv-btn" id="tg-dims" aria-pressed="true" title="Dimensions" aria-label="Show dimensions">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="8" width="19" height="8" rx="1.5" transform="rotate(-30 12 12)"/><path d="M7.6 10.2l1 1.8M10.6 8.5l1.5 2.6M13.6 6.8l1 1.8"/></svg>
+              </button>
+              <button type="button" class="pv-btn pv-parts" id="btn-parts" title="Cut list &amp; sheets" aria-label="Show cut list and sheets">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12"/><circle cx="4" cy="6" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="18" r="1"/></svg>
+              </button>
+              <button type="button" class="pv-btn" id="pv-share" title="Copy link" aria-label="Copy link to this design">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V3M7.5 7.5L12 3l4.5 4.5M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>
+              </button>
+            </div>
+          </div>
           <p class="hint"><span class="dot"></span>Tap a compartment to add or remove a door. Drag the round handles to resize.</p>
         </div>
         <div class="view" id="view-cutlist"></div>
@@ -67,54 +87,83 @@
         <ul class="warnings" id="warnings"></ul>
 
         <div class="ctrl-tabs" id="ctrl-tabs" role="tablist" aria-label="Design options">
-          <button type="button" data-group="style" class="is-on">Style</button>
-          <button type="button" data-group="size">Size</button>
-          <button type="button" data-group="material">Material</button>
-          <button type="button" data-group="details">Details</button>
-          <button type="button" data-group="price">Price</button>
+          <button type="button" data-p="width">Width</button>
+          <button type="button" data-p="height">Height</button>
+          <button type="button" data-p="depth">Depth</button>
+          <button type="button" data-p="style">Style</button>
+          <button type="button" data-p="density">Density</button>
+          <button type="button" data-p="rows">Rows</button>
+          <button type="button" data-p="material">Material</button>
+          <button type="button" data-p="colour">Colour</button>
+          <button type="button" data-p="extras">Extras</button>
+          <button type="button" data-p="delivery">Delivery</button>
         </div>
       </div>
 
       <aside class="panel">
-        <div class="group" data-group="style">
+        <div class="group" data-p="style">
           <h2 class="group-title">Style</h2>
           <div class="styles" id="styles"></div>
-        </div>
-
-        <div class="group" data-group="size">
-          <h2 class="group-title">Size</h2>
-          <div class="field">
-            <label for="width">Width</label>
-            <div class="range-row"><input type="range" id="width"><output id="width-out"></output></div>
-          </div>
-          <div class="field">
-            <label for="height">Height</label>
-            <div class="range-row"><input type="range" id="height"><output id="height-out"></output></div>
-          </div>
-          <div class="field">
-            <span class="label">Depth</span>
-            <div class="seg" id="depth"></div>
-          </div>
-          <div class="field">
-            <label for="rows">Rows</label>
-            <div class="range-row"><input type="range" id="rows" step="1"><output id="rows-out"></output></div>
-          </div>
-          <div class="field">
-            <label for="density">Density</label>
-            <div class="range-row"><input type="range" id="density" min="0" max="100" step="1"><output id="density-out"></output></div>
-          </div>
           <button class="btn btn-ghost btn-small shuffle" id="shuffle" type="button" hidden>↻ Shuffle pattern</button>
         </div>
 
-        <div class="group" data-group="material">
-          <h2 class="group-title">Material</h2>
-          <div class="seg seg-wide" id="material"></div>
-          <p class="note" id="material-desc"></p>
-          <div class="swatches" id="colors"></div>
-          <p class="note" id="color-name"></p>
+        <div class="group">
+          <h2 class="group-title">Size</h2>
+          <div class="field" data-p="width">
+            <label for="width">Width</label>
+            <div class="range-row">
+              <button type="button" class="step" data-for="width" data-d="-1" aria-label="Narrower">−</button>
+              <input type="range" id="width">
+              <button type="button" class="step" data-for="width" data-d="1" aria-label="Wider">+</button>
+              <output id="width-out"></output>
+            </div>
+          </div>
+          <div class="field" data-p="height">
+            <label for="height">Height</label>
+            <div class="range-row">
+              <button type="button" class="step" data-for="height" data-d="-1" aria-label="Lower">−</button>
+              <input type="range" id="height">
+              <button type="button" class="step" data-for="height" data-d="1" aria-label="Taller">+</button>
+              <output id="height-out"></output>
+            </div>
+          </div>
+          <div class="field" data-p="depth">
+            <span class="label">Depth</span>
+            <div class="seg" id="depth"></div>
+          </div>
+          <div class="field" data-p="rows">
+            <label for="rows">Rows</label>
+            <div class="range-row">
+              <button type="button" class="step" data-for="rows" data-d="-1" aria-label="Fewer rows">−</button>
+              <input type="range" id="rows" step="1">
+              <button type="button" class="step" data-for="rows" data-d="1" aria-label="More rows">+</button>
+              <output id="rows-out"></output>
+            </div>
+          </div>
+          <div class="field" data-p="density">
+            <label for="density">Density</label>
+            <div class="range-row">
+              <button type="button" class="step" data-for="density" data-d="-5" aria-label="Fewer bays">−</button>
+              <input type="range" id="density" min="0" max="100" step="1">
+              <button type="button" class="step" data-for="density" data-d="5" aria-label="More bays">+</button>
+              <output id="density-out"></output>
+            </div>
+          </div>
         </div>
 
-        <div class="group" data-group="details">
+        <div class="group">
+          <h2 class="group-title">Material</h2>
+          <div data-p="material">
+            <div class="seg seg-wide" id="material"></div>
+            <p class="note" id="material-desc"></p>
+          </div>
+          <div data-p="colour">
+            <div class="swatches" id="colors"></div>
+            <p class="note" id="color-name"></p>
+          </div>
+        </div>
+
+        <div class="group" data-p="extras">
           <h2 class="group-title">Details</h2>
           <label class="switch"><input type="checkbox" id="back"><span>Back panels</span></label>
           <div class="field">
@@ -125,10 +174,11 @@
               <button type="button" data-v="legs">Legs</button>
             </div>
           </div>
+          <p class="note mobile-only">Tap a compartment on the shelf to add or remove a door.</p>
           <button class="link" id="clear-doors" type="button">Remove all doors</button>
         </div>
 
-        <div class="group price-card" data-group="price">
+        <div class="group price-card" data-p="delivery">
           <div class="option">
             <div>
               <h3>Build it yourself</h3>
@@ -266,10 +316,21 @@
   </dialog>
 
   <div class="mbar" id="mbar" aria-hidden="true">
-    <div class="mbar-price"><small id="mbar-asm">Delivered</small><strong>€<span id="mbar-total"></span></strong></div>
-    <button class="btn btn-ghost btn-small" type="button" id="mbar-files"><span>Files €<span id="mbar-files-price"></span></span></button>
-    <button class="btn btn-dark btn-small" type="button" id="mbar-order">Order</button>
+    <button class="btn btn-ghost" type="button" id="mbar-files"><span>Files €<span id="mbar-files-price"></span></span></button>
+    <button class="btn btn-dark" type="button" id="mbar-order"><span>Order · €<span id="mbar-total"></span></span></button>
   </div>
+
+  <dialog id="dlg-parts" class="dialog dialog-sheet">
+    <div class="dialog-inner">
+      <button class="dialog-close" type="button" data-close aria-label="Close">×</button>
+      <p class="eyebrow">Your design</p>
+      <div class="tabs" id="parts-tabs">
+        <button type="button" class="tab is-active" data-v="cutlist">Cut list</button>
+        <button type="button" class="tab" data-v="sheets">Sheets</button>
+      </div>
+      <div id="parts-body"></div>
+    </div>
+  </dialog>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
