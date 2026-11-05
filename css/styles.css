@@ -38,6 +38,10 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .nav { display: flex; gap: 22px; margin-left: auto; }
 .nav a { text-decoration: none; color: var(--muted); font-size: 15px; }
 .nav a:hover { color: var(--ink); }
+.lang-switch { display: inline-flex; background: var(--soft); border-radius: 999px; padding: 3px; }
+.nav + .lang-switch { margin-left: 0; }
+.lang-switch button { border: 0; background: none; padding: 6px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; letter-spacing: .06em; color: var(--muted); cursor: pointer; }
+.lang-switch button[aria-pressed=true] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 3px rgba(0,0,0,.08); }
 
 /* ---------- buttons ---------- */
 .btn {
@@ -320,7 +324,10 @@ select { width: 100%; padding: 10px 12px; border: 1px solid #d6cfc2; border-radi
 }
 @media (max-width: 760px) {
   .nav { display: none; }
-  .site-header .btn { margin-left: auto; }
+  .lang-switch { margin-left: auto; }
+  .site-header .btn { margin-left: 0; }
+  .site-header { gap: 10px; }
+  .site-header .btn-small { padding: 8px 12px; font-size: 13px; }
   .styles { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .style-name { font-size: 12px; text-align: center; }
   .style-thumb { padding: 4px; margin-bottom: 4px; }

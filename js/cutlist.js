@@ -172,7 +172,7 @@
       { id: 'backScrew', name: 'Back screw 3.5×16 countersunk', qty: backScrews },
       { id: 'hinge', name: 'Clip-on cup hinge 35 mm, inset, soft-close (with plate)', qty: hinges },
       { id: 'pushLatch', name: 'Push-to-open latch', qty: latches },
-      { id: 'leg', name: `Steel leg ${C.build.legHeight} mm`, qty: legs },
+      { id: 'leg', name: 'Steel leg {h} mm', vars: { h: C.build.legHeight }, qty: legs },
       { id: 'bracket', name: 'Angle bracket 30 mm + screws (plinth to bottom)', qty: brackets },
       { id: 'wallFix', name: 'Wall L-bracket + screw + universal plug', qty: wallBrackets }
     ].filter(x => x.qty > 0);

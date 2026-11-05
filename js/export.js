@@ -3,6 +3,7 @@
  */
 (function () {
   const C = MJERA.config;
+  const t = (...a) => MJERA.t(...a);
   const csvCell = v => {
     const s = String(v ?? '');
     return /[",\n;]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
@@ -11,23 +12,23 @@
 
   function cutlistCsv(model) {
     const { design, cut } = model;
-    const rows = [['Part IDs', 'Part', 'Qty', 'Length (mm, grain)', 'Width (mm)', 'Thickness (mm)', 'Material', 'Colour', 'Grain matters', 'Edge banding', 'Rotate allowed']];
+    const rows = [['Part IDs', 'Part', 'Qty', 'Length (mm, grain)', 'Width (mm)', 'Thickness (mm)', 'Material', 'Colour', 'Grain matters', 'Edge banding', 'Rotate allowed'].map(x => t(x))];
     MJERA.cutlist.grouped(cut).forEach(g => {
-      const mat = g.group === 'back' ? design.material.back.name : design.material.name;
-      rows.push([g.ids.join(' '), g.name, g.qty, g.L, g.Wd, g.T, mat, design.color.name,
-        cut.grain ? 'yes' : 'no', g.edges.join(' + ') || '-', cut.grain ? 'no' : 'yes']);
+      const mat = t(g.group === 'back' ? design.material.back.name : design.material.name);
+      rows.push([g.ids.join(' '), t(g.name), g.qty, g.L, g.Wd, g.T, mat, t(design.color.name),
+        t(cut.grain ? 'yes' : 'no'), g.edges.join(' + ') || '-', t(cut.grain ? 'no' : 'yes')]);
     });
     return csv(rows);
   }
 
   function drillingCsv(model) {
-    const rows = [['Part ID', 'Part', 'Face', 'X (mm along length)', 'Y (mm from front / hinge edge)', 'Diameter (mm)', 'Depth (mm)', 'Purpose']];
-    model.cut.parts.forEach(p => p.holes.forEach(h => rows.push([p.id, p.name, h.face, h.x, h.y, h.d, h.depth, h.use])));
+    const rows = [['Part ID', 'Part', 'Face', 'X (mm along length)', 'Y (mm from front / hinge edge)', 'Diameter (mm)', 'Depth (mm)', 'Purpose'].map(x => t(x))];
+    model.cut.parts.forEach(p => p.holes.forEach(h => rows.push([p.id, t(p.name), t(h.face), h.x, h.y, h.d, t(String(h.depth)), t(h.use)])));
     return csv(rows);
   }
 
   function hardwareCsv(model) {
-    return csv([['Item', 'Qty']].concat(model.cut.hardware.map(h => [h.name, h.qty])));
+    return csv([[t('Item'), t('Qty')]].concat(model.cut.hardware.map(h => [t(h.name, h.vars), h.qty])));
   }
 
   function sheetsSvg(model) {
@@ -47,44 +48,44 @@
     const { state, design, cut, price, nest } = model;
     const style = C.styles.find(s => s.id === state.style);
     const lines = [
-      `${C.brand} design — ${style.name}`,
-      `Outer size: ${state.width} × ${state.height} × ${state.depth} cm (W × H × D)`,
-      `Material: ${design.material.name}, ${design.color.name}`,
-      `Rows: ${design.R} · Bays: ${design.rows.reduce((n, r) => n + r.cells.length, 0)} · Doors: ${(state.doors || []).length}`,
-      `Back panels: ${state.back ? 'yes' : 'no'} · Base: ${state.base}`,
-      `Panels: ${cut.parts.length} · Sheets: ${nest.reduce((n, g) => n + g.sheets.length, 0)} · Holes: ${cut.holes}`
+      t('{brand} design — {style}', { brand: C.brand, style: t(style.name) }),
+      t('Outer size: {w} × {h} × {d} cm (W × H × D)', { w: state.width, h: state.height, d: state.depth }),
+      t('Material: {m}, {c}', { m: t(design.material.name), c: t(design.color.name) }),
+      t('Rows: {r} · Bays: {b} · Doors: {d}', { r: design.R, b: design.rows.reduce((n, r) => n + r.cells.length, 0), d: (state.doors || []).length }),
+      t('Back panels: {yes} · Base: {base}', { yes: t(state.back ? 'yes' : 'no'), base: t({ none: 'None', plinth: 'Plinth', legs: 'Legs' }[state.base]) }),
+      t('Panels: {p} · Sheets: {s} · Holes: {h}', { p: cut.parts.length, s: nest.reduce((n, g) => n + g.sheets.length, 0), h: cut.holes })
     ];
     if (withPrice) {
-      lines.push(`Made & checked: €${price.made}`, `Delivery (${price.zone.name}): €${price.delivery}`);
-      if (state.assembly) lines.push(`Assembly: €${price.assembly}`);
-      lines.push(`Estimated total: €${price.total} incl. VAT`);
+      lines.push(t('Made & checked: €{x}', { x: price.made }), t('Delivery ({zone}): €{x}', { zone: t(price.zone.name), x: price.delivery }));
+      if (state.assembly) lines.push(t('Assembly: €{x}', { x: price.assembly }));
+      lines.push(t('Estimated total: €{x} incl. VAT', { x: price.total }));
     }
-    lines.push(`Design link: ${MJERA.app.shareUrl()}`);
+    lines.push(t('Design link: {url}', { url: MJERA.app.shareUrl() }));
     return lines.join('\n');
   }
 
   function readme(model) {
+    const b = C.build;
     return [
       summaryText(model, false), '',
-      'FILES',
-      '  cutlist.csv          panel list, grouped. Length is along the grain.',
-      '  drilling.csv         every hole per part ID. X along length from end 0, Y from front edge.',
-      '  hardware.csv         screws, hinges, latches, legs.',
-      '  sheets.svg           nesting layout for each stock sheet (open in a browser or Inkscape).',
-      '  front-elevation.svg  where each part ID goes.',
-      '  assembly-manual.html step-by-step manual for this exact shelf (open in a browser, print or save as PDF).',
-      '  labels.html          part stickers: ID, package, FRONT and LEFT/BOTTOM arrows.',
-      '  project.json         re-open this design on the website.', '',
-      'CONSTRUCTION',
-      `  Board ${C.build.t} mm, saw kerf ${C.build.kerf} mm, sheet trim ${C.build.trim} mm each side.`,
-      '  Bottom, shelves and top run the full width. Each row has its own end panels and dividers standing between two shelves.',
-      '  End panel joints: 2 dowels Ø8 + Minifix 15 cam lock(s); cam on the inside face, bolt in the shelf. Divider joints: dowels only.',
-      '  The back (or the end braces when there is no back) overlays the carcass, so carcass parts are shallower by its thickness.',
-      '  Drilling X runs from end 0 (LEFT end of shelves, BOTTOM end of verticals). Y is measured from the FRONT edge (from the bottom edge on back panels).',
-      '  Hinge plate holes assume inset clip-on hinges (37 mm system line + door thickness). Check against your hinge spec.', '',
-      'ASSEMBLY: see assembly-manual.html. In short: build face-down next to the wall, bottom towards the wall,',
-      '  one row at a time from the bottom; lock the cams; screw on the back; stand it up; fix it to the wall.', '',
-      'Built with ' + C.brand + ' — cut, drilled and delivered in Montenegro if you would rather not.'
+      t('FILES'),
+      '  cutlist.csv          ' + t('panel list, grouped. Length is along the grain.'),
+      '  drilling.csv         ' + t('every hole per part ID. X along length from end 0, Y from front edge.'),
+      '  hardware.csv         ' + t('screws, hinges, latches, legs.'),
+      '  sheets.svg           ' + t('nesting layout for each stock sheet (open in a browser or Inkscape).'),
+      '  front-elevation.svg  ' + t('where each part ID goes.'),
+      '  assembly-manual.html ' + t('step-by-step manual for this exact shelf (open in a browser, print or save as PDF).'),
+      '  labels.html          ' + t('part stickers: ID, package, FRONT and LEFT/BOTTOM arrows.'),
+      '  project.json         ' + t('re-open this design on the website.'), '',
+      t('CONSTRUCTION'),
+      '  ' + t('Board {t} mm, saw kerf {k} mm, sheet trim {tr} mm each side.', { t: b.t, k: b.kerf, tr: b.trim }),
+      '  ' + t('Bottom, shelves and top run the full width. Each row has its own end panels and dividers standing between two shelves.'),
+      '  ' + t('End panel joints: 2 dowels Ø8 + Minifix 15 cam lock(s); cam on the inside face, bolt in the shelf. Divider joints: dowels only.'),
+      '  ' + t('The back (or the end braces when there is no back) overlays the carcass, so carcass parts are shallower by its thickness.'),
+      '  ' + t('Drilling X runs from end 0 (LEFT end of shelves, BOTTOM end of verticals). Y is measured from the FRONT edge (from the bottom edge on back panels).'),
+      '  ' + t('Hinge plate holes assume inset clip-on hinges (37 mm system line + door thickness). Check against your hinge spec.'), '',
+      t('ASSEMBLY: see assembly-manual.html. In short: build face-down next to the wall, bottom towards the wall, one row at a time from the bottom; lock the cams; screw on the back; stand it up; fix it to the wall.'), '',
+      t('Built with {brand} — cut, drilled and delivered in Montenegro if you would rather not.', { brand: C.brand })
     ].join('\r\n');
   }
 

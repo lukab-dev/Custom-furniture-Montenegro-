@@ -14,10 +14,20 @@ python3 -m http.server 8000   # then visit http://localhost:8000
 
 It deploys as-is to GitHub Pages, Netlify, Cloudflare Pages and similar hosts.
 
+## Languages
+
+The site has two languages, switched with **EN | NAŠ** in the header:
+
+- **EN:** English.
+- **NAŠ ("Naš jezik"):** the local language, in Latin script and ijekavian, with wording common in Montenegro. It is deliberately not labelled with a national name. The page's `lang` attribute uses the neutral umbrella code `hbs-Latn`.
+
+Browsers set to a regional language (sr, hr, bs, cnr, sh) open in NAŠ automatically; everyone else gets English. The choice is remembered, and `?lang=nas` or `?lang=en` forces one. All translations live in `js/i18n.js`. The site, order message, cut-file package (CSV headers, README), assembly manual and labels all follow the selected language. Any missing translation falls back to English.
+
 ## Project layout
 
 | File | What it does |
 |---|---|
+| `js/i18n.js` | Translations (English → Naš jezik) and the language switch. |
 | `js/config.js` | **Business settings**: materials, sheet sizes, colours, every price, delivery zones, contact details. Start here. |
 | `js/layout.js` | Turns the design into rows and compartments (the style algorithms live here). |
 | `js/cutlist.js` | Panels, edge banding, drilling coordinates and hardware. |
@@ -49,7 +59,7 @@ This follows the same principle as Tylko's system: full-width shelves, short ver
 - [ ] To make the export truly paid, move file generation server-side, or deliver the ZIP from the payment success page. Client-side code can always be bypassed.
 - [ ] Replace the mailto/WhatsApp order hand-off with a form backend (e.g. Formspree, a Cloudflare Worker, or a small API) that stores orders.
 - [ ] Have your workshop verify a cut list and drilling map on a test build, including the Minifix distance (34 mm) and the hinge plate set-back for your hinge brand.
-- [ ] Add a Montenegrin (ME) language version.
+- [ ] Have a native speaker proofread `js/i18n.js`.
 
 ## Ideas for later
 

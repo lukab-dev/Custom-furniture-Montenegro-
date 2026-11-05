@@ -1,5 +1,6 @@
 (function () {
   const C = MJERA.config;
+  const t = (...a) => MJERA.t(...a);
   const $ = s => document.querySelector(s);
   const $$ = s => [...document.querySelectorAll(s)];
 
@@ -60,12 +61,7 @@
   // ---------- UI building ----------
   function buildControls() {
     // styles
-    $('#styles').innerHTML = C.styles.map(s => {
-      const demo = MJERA.layout.build({ ...DEFAULT, style: s.id, width: 140, height: 90, depth: 32, rows: 3, density: 55, base: 'none', doors: [], back: true, material: 'ply', color: 'natural' });
-      return `<button type="button" class="style-card" data-style="${s.id}">
-        <span class="style-thumb">${MJERA.preview.shelf(demo, null, { mini: true })}</span>
-        <span class="style-name">${s.name}</span><span class="style-desc">${s.desc}</span></button>`;
-    }).join('');
+    relabel();
     $('#styles').addEventListener('click', e => {
       const b = e.target.closest('[data-style]'); if (!b) return;
       set({ style: b.dataset.style });
@@ -76,9 +72,7 @@
     Object.assign($('#height'), { min: L.height.min, max: L.height.max, step: L.height.step });
     ['width', 'height', 'rows', 'density'].forEach(id => $('#' + id).addEventListener('input', e => set({ [id]: Number(e.target.value) })));
 
-    $('#depth').innerHTML = L.depths.map(d => `<button type="button" data-v="${d}">${d} cm</button>`).join('');
     seg('#depth', v => set({ depth: Number(v) }));
-    $('#material').innerHTML = C.materials.map(m => `<button type="button" data-v="${m.id}">${m.short}</button>`).join('');
     seg('#material', v => {
       const m = C.materials.find(x => x.id === v);
       set({ material: v, color: m.colors.some(c => c.id === state.color) ? state.color : m.colors[0].id });
@@ -87,7 +81,6 @@
     $('#colors').addEventListener('click', e => { const b = e.target.closest('[data-v]'); if (b) set({ color: b.dataset.v }); });
     $('#back').addEventListener('change', e => set({ back: e.target.checked }));
     $('#assembly').addEventListener('change', e => set({ assembly: e.target.checked }));
-    $('#delivery').innerHTML = C.pricing.delivery.map(z => `<option value="${z.id}">${z.name} — ${z.price ? '€' + z.price : 'free'}</option>`).join('');
     $('#delivery').addEventListener('change', e => set({ delivery: e.target.value }));
     $('#shuffle').addEventListener('click', () => set({ seed: Math.floor(Math.random() * 1e6) }));
     $('#clear-doors').addEventListener('click', () => set({ doors: [] }));
@@ -110,7 +103,7 @@
     $('#btn-export').addEventListener('click', openExport);
     $('#btn-pay').addEventListener('click', pay);
     $('#btn-order').addEventListener('click', openOrder);
-    $('#btn-share').addEventListener('click', () => copy(shareUrl(), 'Link copied — share or bookmark it.'));
+    $('#btn-share').addEventListener('click', () => copy(shareUrl(), t('Link copied — share or bookmark it.')));
     $('#order-form').addEventListener('submit', submitOrder);
     $$('[data-close]').forEach(b => b.addEventListener('click', () => b.closest('dialog').close()));
     $$('dialog').forEach(d => d.addEventListener('click', e => { if (e.target === d) d.close(); }));
@@ -139,7 +132,7 @@
     });
     toggle($('#tg-person'), 'person');
     toggle($('#tg-dims'), 'dims');
-    $('#pv-share').addEventListener('click', () => copy(shareUrl(), 'Link copied — share or bookmark it.'));
+    $('#pv-share').addEventListener('click', () => copy(shareUrl(), t('Link copied — share or bookmark it.')));
     $('#btn-parts').addEventListener('click', () => { showParts('cutlist'); $('#dlg-parts').showModal(); });
     $('#parts-tabs').addEventListener('click', e => { const b = e.target.closest('[data-v]'); if (b) showParts(b.dataset.v); });
     $('#mbar-files').addEventListener('click', openExport);
@@ -174,8 +167,6 @@
     pv.addEventListener('pointercancel', endDrag);
 
     const mail = $('#footer-mail'); mail.textContent = C.contactEmail; mail.href = 'mailto:' + C.contactEmail;
-    $('#hero-export-price').textContent = money(C.pricing.exportPackage);
-    $('#plan-export-price').textContent = money(C.pricing.exportPackage);
   }
 
   function headerHeight() {
@@ -191,7 +182,22 @@
     $('#parts-body').innerHTML = $('#view-' + v).innerHTML;
   }
 
-  function money(v) { return v ? '€' + v : 'Free'; }
+  function money(v) { return v ? '€' + v : t('Free'); }
+
+  // Text built from config (re-run when the language changes)
+  function relabel() {
+    $('#styles').innerHTML = C.styles.map(s => {
+      const demo = MJERA.layout.build({ ...DEFAULT, style: s.id, width: 140, height: 90, depth: 32, rows: 3, density: 55, base: 'none', doors: [], back: true, material: 'ply', color: 'natural' });
+      return `<button type="button" class="style-card" data-style="${s.id}">
+        <span class="style-thumb">${MJERA.preview.shelf(demo, null, { mini: true })}</span>
+        <span class="style-name">${t(s.name)}</span><span class="style-desc">${t(s.desc)}</span></button>`;
+    }).join('');
+    $('#depth').innerHTML = C.limits.depths.map(d => `<button type="button" data-v="${d}">${d} cm</button>`).join('');
+    $('#material').innerHTML = C.materials.map(m => `<button type="button" data-v="${m.id}">${t(m.short)}</button>`).join('');
+    $('#delivery').innerHTML = C.pricing.delivery.map(z => `<option value="${z.id}">${t(z.name)} — ${z.price ? '€' + z.price : t('free')}</option>`).join('');
+    $('#hero-export-price').textContent = money(C.pricing.exportPackage);
+    $('#plan-export-price').textContent = money(C.pricing.exportPackage);
+  }
 
   function seg(sel, onPick) {
     $(sel).addEventListener('click', e => { const b = e.target.closest('[data-v]'); if (b) onPick(b.dataset.v); });
@@ -219,12 +225,12 @@
     $('#rows-out').textContent = `${design.R} · ${Math.round(design.h / 10)} cm`;
     $('#density').value = s.density;
     const bays = design.rows.reduce((n, r) => n + r.cells.length, 0);
-    $('#density-out').textContent = bays + ' bays';
+    $('#density-out').textContent = t('Bays: {n}', { n: bays });
     markSeg('#depth', s.depth); markSeg('#material', s.material); markSeg('#base', s.base);
-    $('#material-desc').textContent = design.material.desc;
+    $('#material-desc').textContent = t(design.material.desc);
     $('#colors').innerHTML = design.material.colors.map(c =>
-      `<button type="button" class="swatch${c.id === s.color ? ' is-on' : ''}" data-v="${c.id}" style="--c:${c.hex}" title="${c.name}" aria-label="${c.name}"></button>`).join('');
-    $('#color-name').textContent = design.color.name;
+      `<button type="button" class="swatch${c.id === s.color ? ' is-on' : ''}" data-v="${c.id}" style="--c:${c.hex}" title="${t(c.name)}" aria-label="${t(c.name)}"></button>`).join('');
+    $('#color-name').textContent = t(design.color.name);
     $('#back').checked = s.back;
     $('#assembly').checked = s.assembly;
     $('#delivery').value = s.delivery;
@@ -232,7 +238,7 @@
 
     $('#preview').innerHTML = MJERA.preview.shelf(design, cut, { interactive: true, dims: ui.dims, person: ui.person });
     $('#readout').textContent = `${s.width} × ${s.height} × ${s.depth} cm`;
-    $('#warnings').innerHTML = design.warnings.concat(nest.flatMap(g => g.oversize.map(p => `${p.id} (${p.L}×${p.Wd}) doesn't fit on a stock sheet.`)))
+    $('#warnings').innerHTML = design.warnings.concat(nest.flatMap(g => g.oversize.map(p => t("{id} ({L}×{W}) doesn't fit on a stock sheet.", { id: p.id, L: p.L, W: p.Wd }))))
       .map(w => `<li>${w}</li>`).join('');
 
     renderCutlist(design, cut, nest);
@@ -246,7 +252,7 @@
     $('#mbar-total').textContent = price.total;
     $('#mbar-files-price').textContent = money(price.exportPackage);
     $('#pv-total').textContent = price.total;
-    $('#pv-sub').textContent = `${s.width} × ${s.height} × ${s.depth} cm · ${s.assembly ? 'delivered & assembled' : 'delivered'}`;
+    $('#pv-sub').textContent = `${s.width} × ${s.height} × ${s.depth} cm · ${t(s.assembly ? 'delivered & assembled' : 'delivered')}`;
     $$('.step').forEach(b => {
       const input = $('#' + b.dataset.for);
       b.disabled = input.disabled || (Number(b.dataset.d) < 0 ? Number(input.value) <= Number(input.min) : Number(input.value) >= Number(input.max));
@@ -259,22 +265,21 @@
     const groups = MJERA.cutlist.grouped(cut);
     const sheets = nest.reduce((n, g) => n + g.sheets.length, 0);
     const sw = k => `<i class="kind" style="background:${MJERA.preview.PART_COLORS[k] || '#ddd'}"></i>`;
-    const kindOf = name => cut.parts.find(p => p.name === name).kind;
     $('#view-cutlist').innerHTML = `
       <div class="stats">
-        <div><strong>${cut.parts.length}</strong><span>panels</span></div>
-        <div><strong>${sheets}</strong><span>sheets</span></div>
-        <div><strong>${cut.holes}</strong><span>holes</span></div>
-        <div><strong>${cut.edgeMeters ? cut.edgeMeters.toFixed(1) + ' m' : '—'}</strong><span>edge banding</span></div>
+        <div><strong>${cut.parts.length}</strong><span>${t('Panels')}</span></div>
+        <div><strong>${sheets}</strong><span>${t('Sheets')}</span></div>
+        <div><strong>${cut.holes}</strong><span>${t('Holes')}</span></div>
+        <div><strong>${cut.edgeMeters ? cut.edgeMeters.toFixed(1) + ' m' : '—'}</strong><span>${t('Edge banding')}</span></div>
       </div>
       <div class="table-wrap"><table class="cut-table">
-        <thead><tr><th>Part</th><th>IDs</th><th class="num">Qty</th><th class="num">L × W × T (mm)</th></tr></thead>
-        <tbody>${groups.map(g => `<tr><td>${sw(kindOf(g.name))}${g.name}</td><td class="ids">${g.ids.join(' ')}</td><td class="num">${g.qty}</td><td class="num">${g.L} × ${g.Wd} × ${g.T}</td></tr>`).join('')}</tbody>
+        <thead><tr><th>${t('Part')}</th><th>${t('IDs')}</th><th class="num">${t('Qty')}</th><th class="num">${t('L × W × T (mm)')}</th></tr></thead>
+        <tbody>${groups.map(g => `<tr><td>${sw(g.kind)}${t(g.name)}</td><td class="ids">${g.ids.join(' ')}</td><td class="num">${g.qty}</td><td class="num">${g.L} × ${g.Wd} × ${g.T}</td></tr>`).join('')}</tbody>
       </table></div>
-      <h3 class="sub">Hardware</h3>
-      <div class="table-wrap"><table class="cut-table"><tbody>${cut.hardware.map(h => `<tr><td>${h.name}</td><td class="num">${h.qty}</td></tr>`).join('')}</tbody></table></div>
-      <p class="note">Length (L) runs along the grain${cut.grain ? ' — grain direction is fixed for this material' : ''}. Full drilling coordinates are in the cut-file package.</p>
-      <p><button type="button" class="btn btn-ghost btn-small" data-open="manual">Open assembly manual</button> <button type="button" class="btn btn-ghost btn-small" data-open="labels">Part labels</button></p>`;
+      <h3 class="sub">${t('Hardware')}</h3>
+      <div class="table-wrap"><table class="cut-table"><tbody>${cut.hardware.map(h => `<tr><td>${t(h.name, h.vars)}</td><td class="num">${h.qty}</td></tr>`).join('')}</tbody></table></div>
+      <p class="note">${t('Length (L) runs along the grain{fixed}. Full drilling coordinates are in the cut-file package.', { fixed: cut.grain ? t(' — grain direction is fixed for this material') : '' })}</p>
+      <p><button type="button" class="btn btn-ghost btn-small" data-open="manual">${t('Open assembly manual')}</button> <button type="button" class="btn btn-ghost btn-small" data-open="labels">${t('Part labels')}</button></p>`;
   }
 
   function renderSheets(nest) {
@@ -286,13 +291,13 @@
   // ---------- dialogs ----------
   function openExport() {
     const { cut, nest, price } = model;
-    $('#x-parts').textContent = `${cut.parts.length} panels`;
-    $('#x-holes').textContent = `${cut.holes} holes`;
-    $('#x-sheets').textContent = `${nest.reduce((n, g) => n + g.sheets.length, 0)} sheet layouts`;
+    $('#x-parts').textContent = t('Panels: {n}', { n: cut.parts.length });
+    $('#x-holes').textContent = t('Holes: {n}', { n: cut.holes });
+    $('#x-sheets').textContent = t('Sheet layouts: {n}', { n: nest.reduce((n, g) => n + g.sheets.length, 0) });
     const free = !price.exportPackage;
-    $('#x-price').textContent = free ? 'Download for free' : `Pay €${price.exportPackage} & download`;
+    $('#x-price').textContent = free ? t('Download for free') : t('Pay €{p} & download', { p: price.exportPackage });
     $('#demo-note').hidden = !free && !!C.checkoutUrl;
-    if (!free && !C.checkoutUrl) $('#demo-note').textContent = 'Demo mode: payment isn\'t connected yet, so the download is free.';
+    if (!free && !C.checkoutUrl) $('#demo-note').textContent = t("Demo mode: payment isn't connected yet, so the download is free.");
     $('#dlg-export').showModal();
   }
 
@@ -305,7 +310,7 @@
     }
     await MJERA.exporter.downloadPackage(model);
     $('#dlg-export').close();
-    toast('Package downloaded.');
+    toast(t('Package downloaded.'));
   }
 
   function openOrder() {
@@ -317,18 +322,18 @@
     e.preventDefault();
     const via = (e.submitter && e.submitter.dataset.via) || 'email';
     const f = new FormData(e.target);
-    const who = ['name', 'phone', 'email', 'city', 'address', 'notes'].map(k => f.get(k) ? `${k[0].toUpperCase() + k.slice(1)}: ${f.get(k)}` : '').filter(Boolean).join('\n');
-    const body = `New order request\n\n${MJERA.exporter.summaryText(model, true)}\n\n${who}`;
-    const subject = `Order request — ${state.width}×${state.height}×${state.depth} ${state.style}`;
+    const who = ['name', 'phone', 'email', 'city', 'address', 'notes'].map(k => f.get(k) ? `${t({ name: 'Name', phone: 'Phone', email: 'Email', city: 'Town', address: 'Address', notes: 'Notes' }[k])}: ${f.get(k)}` : '').filter(Boolean).join('\n');
+    const body = `${t('New order request')}\n\n${MJERA.exporter.summaryText(model, true)}\n\n${who}`;
+    const subject = t('Order request — {dims} {style}', { dims: `${state.width}×${state.height}×${state.depth}`, style: t(C.styles.find(x => x.id === state.style).name) });
     if (via === 'whatsapp') window.open(`https://wa.me/${C.whatsapp}?text=${encodeURIComponent(body)}`, '_blank', 'noopener');
     else location.href = `mailto:${C.contactEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     $('#dlg-order').close();
-    toast('Thanks! Your request is ready to send.');
+    toast(t('Thanks! Your request is ready to send.'));
   }
 
   // ---------- helpers ----------
   function copy(text, msg) {
-    (navigator.clipboard ? navigator.clipboard.writeText(text) : Promise.reject()).then(() => toast(msg), () => prompt('Copy this link:', text));
+    (navigator.clipboard ? navigator.clipboard.writeText(text) : Promise.reject()).then(() => toast(msg), () => prompt(t('Copy this link:'), text));
   }
   let toastT;
   function toast(msg) {
@@ -347,5 +352,6 @@
     buildControls();
     heroVisual();
     render();
+    document.addEventListener('mjera:lang', () => { relabel(); heroVisual(); render(); MJERA.i18n.apply(document.body); });
   });
 })();

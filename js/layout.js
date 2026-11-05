@@ -4,6 +4,7 @@
  */
 (function () {
   const C = MJERA.config;
+  const tr = (...a) => MJERA.t(...a);
 
   function rng(seed) {             // mulberry32
     let a = seed >>> 0;
@@ -95,11 +96,11 @@
 
     const warnings = [];
     const maxSpan = Math.max(...rows.flatMap(r => r.cells.map(c => c.w)));
-    if (maxSpan > C.limits.maxSpan) warnings.push(`Widest bay is ${Math.round(maxSpan / 10)} cm — shelves over ${C.limits.maxSpan / 10} cm may sag under books. Increase density.`);
-    if (W > material.sheet[0] - 2 * C.build.trim) warnings.push(`Width exceeds a single ${material.short} sheet. Reduce width or split into two units.`);
-    if (!state.back && H > 1600) warnings.push('Without back panels the shelf is braced only at its ends. For a unit this tall we recommend back panels.');
+    if (maxSpan > C.limits.maxSpan) warnings.push(tr('Widest bay is {w} cm — shelves over {m} cm may sag under books. Increase density.', { w: Math.round(maxSpan / 10), m: C.limits.maxSpan / 10 }));
+    if (W > material.sheet[0] - 2 * C.build.trim) warnings.push(tr('Width exceeds a single {mat} sheet. Reduce width or split into two units.', { mat: tr(material.short) }));
+    if (!state.back && H > 1600) warnings.push(tr('Without back panels the shelf is braced only at its ends. For a unit this tall we recommend back panels.'));
     const smallBay = Math.min(...rows.flatMap(r => r.cells.map(c => c.w)));
-    if (smallBay < 120) warnings.push(`Some bays are only ${Math.round(smallBay / 10)} cm wide. Reduce density.`);
+    if (smallBay < 120) warnings.push(tr('Some bays are only {w} cm wide. Reduce density.', { w: Math.round(smallBay / 10) }));
 
     return { state, material, color, t, backT, W, H, D, base, Hb, Wi, R, h, n, rows, warnings, rowRange: range };
   }

@@ -35,7 +35,7 @@
 
     const P = 's' + (++uid) + '_';
     const out = [];
-    out.push(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="${n1(vbX)} ${n1(vbY)} ${n1(vbW)} ${n1(vbH)}" class="shelf-svg" role="img" aria-label="Shelf preview ${W / 10} by ${H / 10} by ${D / 10} cm">`);
+    out.push(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="${n1(vbX)} ${n1(vbY)} ${n1(vbW)} ${n1(vbH)}" class="shelf-svg" role="img" aria-label="${MJERA.t('Shelf preview {w} by {h} by {d} cm', { w: W / 10, h: H / 10, d: D / 10 })}">`);
     out.push('<defs>');
     if (ply) {
       out.push(`<pattern id="${P}plyH" width="40" height="6" patternUnits="userSpaceOnUse"><rect width="40" height="6" fill="${edge}"/><rect y="2.4" width="40" height="1.2" fill="${shade(edge.startsWith('#') ? edge : '#d6b886', -0.2)}"/></pattern>`);
@@ -102,7 +102,7 @@
     // Click targets
     if (opts.interactive) {
       rows.forEach(row => row.cells.forEach(cell => {
-        out.push(`<rect class="hit${cell.door ? ' has-door' : ''}" data-key="${cell.key}" x="${n1(cell.x0)}" y="${n1(Y(by(cell.y1)))}" width="${n1(cell.x1 - cell.x0)}" height="${n1(cell.h)}"><title>${cell.door ? 'Remove door' : 'Add door'}</title></rect>`);
+        out.push(`<rect class="hit${cell.door ? ' has-door' : ''}" data-key="${cell.key}" x="${n1(cell.x0)}" y="${n1(Y(by(cell.y1)))}" width="${n1(cell.x1 - cell.x0)}" height="${n1(cell.h)}"><title>${MJERA.t(cell.door ? 'Remove door' : 'Add door')}</title></rect>`);
       }));
     }
 
@@ -114,7 +114,7 @@
         const tri = k === 'w'
           ? [[[cx - a, cy], [cx - b, cy - s2], [cx - b, cy + s2]], [[cx + a, cy], [cx + b, cy - s2], [cx + b, cy + s2]]]
           : [[[cx, cy - a], [cx - s2, cy - b], [cx + s2, cy - b]], [[cx, cy + a], [cx - s2, cy + b], [cx + s2, cy + b]]];
-        out.push(`<g class="handle" data-handle="${k}"><title>Drag to change ${k === 'w' ? 'width' : 'height'}</title>` +
+        out.push(`<g class="handle" data-handle="${k}"><title>${MJERA.t(k === 'w' ? 'Drag to change width' : 'Drag to change height')}</title>` +
           `<circle cx="${n1(cx)}" cy="${n1(cy)}" r="${n1(r * 2)}" fill="transparent"/>` +
           `<circle cx="${n1(cx)}" cy="${n1(cy)}" r="${n1(r)}" fill="#fff" stroke="#1f1e1b" stroke-width="${n1(r * 0.1)}"/>` +
           tri.map(q => `<polygon points="${pts(q)}" fill="#1f1e1b"/>`).join('') + '</g>');
@@ -155,8 +155,8 @@
   function sheet(s, index, label) {
     const [SL, SW] = s.size;
     const out = [];
-    out.push(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="-20 -70 ${SL + 40} ${SW + 90}" class="sheet-svg" role="img" aria-label="Sheet ${index + 1}">`);
-    out.push(`<text x="0" y="-25" font-size="44" font-family="Inter,Arial,sans-serif" font-weight="600" fill="#2b2a27">Sheet ${index + 1} · ${label} · ${SL}×${SW} mm · ${Math.round(s.used * 100)}% used</text>`);
+    out.push(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="-20 -70 ${SL + 40} ${SW + 90}" class="sheet-svg" role="img" aria-label="${MJERA.t('Sheet {n}', { n: index + 1 })}">`);
+    out.push(`<text x="0" y="-25" font-size="44" font-family="Inter,Arial,sans-serif" font-weight="600" fill="#2b2a27">${MJERA.t('Sheet {n} · {label} · {w}×{h} mm · {p}% used', { n: index + 1, label, w: SL, h: SW, p: Math.round(s.used * 100) })}</text>`);
     out.push(`<defs><pattern id="w${++uid}" width="30" height="30" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="30" height="30" fill="#f4f1ea"/><line x1="0" y1="0" x2="0" y2="30" stroke="#ddd6c8" stroke-width="8"/></pattern></defs>`);
     out.push(`<rect x="0" y="0" width="${SL}" height="${SW}" fill="url(#w${uid})" stroke="#8a857b" stroke-width="4"/>`);
     s.placed.forEach(q => {

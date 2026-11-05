@@ -16,12 +16,12 @@
     const handling = cut.parts.length * P.handlingPerPart + P.qcBase + cut.parts.length * P.qcPerPart + cut.preinstalled * P.preinstallPerFitting;
 
     const lines = [
-      { label: `Boards (${sheets} sheet${sheets === 1 ? '' : 's'})`, value: gross(materials) },
-      design.material.finishPerM2 ? { label: design.material.id === 'mdf' ? 'Spray lacquer' : 'Lacquer / oil finish', value: gross(finishing) } : null,
-      { label: design.material.edgeBanding ? 'Cutting & edge banding' : 'Precision cutting', value: gross(cutting) },
-      { label: `Drilling (${cut.holes} holes)`, value: gross(drilling) },
-      { label: 'Hardware', value: gross(hardware) },
-      { label: 'Pre-fitted hardware, labels, QC & packing', value: gross(handling) }
+      { label: MJERA.t('Boards ({n} sheets)', { n: sheets }), value: gross(materials) },
+      design.material.finishPerM2 ? { label: MJERA.t(design.material.id === 'mdf' ? 'Spray lacquer' : 'Lacquer / oil finish'), value: gross(finishing) } : null,
+      { label: MJERA.t(design.material.edgeBanding ? 'Cutting & edge banding' : 'Precision cutting'), value: gross(cutting) },
+      { label: MJERA.t('Drilling ({n} holes)', { n: cut.holes }), value: gross(drilling) },
+      { label: MJERA.t('Hardware'), value: gross(hardware) },
+      { label: MJERA.t('Pre-fitted hardware, labels, QC & packing'), value: gross(handling) }
     ].filter(Boolean);
 
     const made = Math.round(lines.reduce((s, l) => s + l.value, 0));

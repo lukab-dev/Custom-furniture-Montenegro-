@@ -73,10 +73,10 @@
     const carcass = cut.parts.filter(p => p.group === 'carcass');
     const backs = cut.parts.filter(p => p.group === 'back');
     const a = packGroup(carcass, m.sheet, !cut.grain);
-    groups.push({ id: 'carcass', label: `${m.name} 18 mm · ${design.color.name}`, sheet: m.sheet, pricePerSheet: m.pricePerSheet, ...a });
+    groups.push({ id: 'carcass', label: MJERA.t('{name} 18 mm · {color}', { name: MJERA.t(m.name), color: MJERA.t(design.color.name) }), sheet: m.sheet, pricePerSheet: m.pricePerSheet, ...a });
     if (backs.length) {
       const b = packGroup(backs, m.back.sheet, !m.grain);
-      groups.push({ id: 'back', label: m.back.name, sheet: m.back.sheet, pricePerSheet: m.back.pricePerSheet, ...b });
+      groups.push({ id: 'back', label: MJERA.t(m.back.name), sheet: m.back.sheet, pricePerSheet: m.back.pricePerSheet, ...b });
     }
     return groups;
   }
