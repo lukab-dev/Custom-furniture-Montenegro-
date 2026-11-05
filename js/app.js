@@ -110,9 +110,57 @@
     $$('[data-close]').forEach(b => b.addEventListener('click', () => b.closest('dialog').close()));
     $$('dialog').forEach(d => d.addEventListener('click', e => { if (e.target === d) d.close(); }));
 
+    // Mobile: one option group at a time under the pinned preview
+    $('#ctrl-tabs').addEventListener('click', e => {
+      const b = e.target.closest('[data-group]'); if (!b) return;
+      setGroup(b.dataset.group);
+      const top = $('#configure').getBoundingClientRect().top + window.scrollY - headerHeight();
+      if (window.scrollY > top + 2) window.scrollTo({ top, behavior: 'smooth' });
+    });
+    setGroup('style');
+    $('#mbar-files').addEventListener('click', openExport);
+    $('#mbar-order').addEventListener('click', openOrder);
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(([en]) => {
+        $('#mbar').classList.toggle('show', en.isIntersecting);
+        $('#mbar').setAttribute('aria-hidden', !en.isIntersecting);
+      }, { rootMargin: '-30% 0px -30% 0px' }).observe($('#configure'));
+    }
+
+    // Drag handles on the preview
+    const pv = $('#preview');
+    let drag = null;
+    pv.addEventListener('pointerdown', e => {
+      const hd = e.target.closest('[data-handle]'); if (!hd) return;
+      e.preventDefault();
+      const ctm = pv.querySelector('svg').getScreenCTM();
+      drag = { k: hd.dataset.handle, x: e.clientX, y: e.clientY, w: state.width, h: state.height, mmPx: 1 / ctm.a };
+      pv.setPointerCapture(e.pointerId);
+      pv.classList.add('dragging');
+    });
+    pv.addEventListener('pointermove', e => {
+      if (!drag) return;
+      const L = C.limits;
+      const clamp = (v, a, b) => Math.min(b, Math.max(a, Math.round(v)));
+      if (drag.k === 'w') set({ width: clamp(drag.w + 2 * (e.clientX - drag.x) * drag.mmPx / 10, L.width.min, L.width.max) });
+      else set({ height: clamp(drag.h - (e.clientY - drag.y) * drag.mmPx / 10, L.height.min, L.height.max) });
+    });
+    const endDrag = () => { drag = null; pv.classList.remove('dragging'); };
+    pv.addEventListener('pointerup', endDrag);
+    pv.addEventListener('pointercancel', endDrag);
+
     const mail = $('#footer-mail'); mail.textContent = C.contactEmail; mail.href = 'mailto:' + C.contactEmail;
     $('#hero-export-price').textContent = C.pricing.exportPackage;
     $('#plan-export-price').textContent = C.pricing.exportPackage;
+  }
+
+  function headerHeight() {
+    const h = document.querySelector('.site-header');
+    return getComputedStyle(h).position === 'sticky' ? h.offsetHeight : 0;
+  }
+  function setGroup(g) {
+    $$('#ctrl-tabs [data-group]').forEach(b => { b.classList.toggle('is-on', b.dataset.group === g); b.setAttribute('aria-selected', b.dataset.group === g); });
+    $$('.panel .group').forEach(el => el.classList.toggle('is-current', el.dataset.group === g));
   }
 
   function seg(sel, onPick) {
@@ -165,6 +213,9 @@
     $('#breakdown').innerHTML = price.lines.map(l => `<dt>${l.label}</dt><dd>€${l.value}</dd>`).join('');
     $('#assembly-price').textContent = '+€' + Math.round(C.pricing.assembly.base + cut.parts.length * C.pricing.assembly.perPart);
     $('#price-total').textContent = price.total;
+    $('#mbar-total').textContent = price.total;
+    $('#mbar-asm').textContent = s.assembly ? 'Delivered & assembled' : 'Delivered';
+    $('#mbar-files-price').textContent = price.exportPackage;
 
     try { history.replaceState(null, '', '#d=' + encode(state).replace(/\+/g, '-').replace(/\//g, '_')); } catch (e) { /* file:// */ }
   }

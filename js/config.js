@@ -26,7 +26,7 @@ MJERA.config = {
     doorGap: 2,       // gap around inset doors (mm)
     plinthHeight: 80, // mm
     legHeight: 100,   // mm
-    connectorInset: 50 // mm from front/back edge for confirmat screws
+    connectorInset: 40 // mm from front/back edge for dowels
   },
 
   styles: [
@@ -87,13 +87,16 @@ MJERA.config = {
     handlingPerPart: 1.2,    // labelling, sorting
     qcBase: 15, qcPerPart: 0.6,
     hardware: {
-      connector: 0.18,       // confirmat screw + cap
-      hinge: 4.2,            // soft-close cup hinge incl. plate
+      cam: 0.35,             // Minifix cam + bolt + cap
+      dowel: 0.03,
+      backScrew: 0.03,
+      hinge: 4.2,            // clip-on soft-close cup hinge incl. plate
       pushLatch: 3.5,
       leg: 6,
-      backScrewPack: 4,
+      bracket: 0.4,
       wallFix: 3             // anti-tip wall bracket kit
     },
+    preinstallPerFitting: 0.12, // fitting dowels, bolts, cams, hinges before shipping
     margin: 1.3,             // workshop margin on cost
     vat: 0.21,               // Montenegro standard VAT
     assembly: { base: 35, perPart: 1.8 },

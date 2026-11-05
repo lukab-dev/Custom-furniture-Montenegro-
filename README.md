@@ -29,11 +29,16 @@ It deploys as-is to GitHub Pages, Netlify, Cloudflare Pages and similar hosts.
 
 ## Construction model
 
-- 18 mm carcass. Sides run full height; bottom, shelves and top sit between them.
-- Dividers stand on the shelves, fixed with confirmat screws (7 mm through hole and 5 mm edge pilot, 50 mm from each edge, plus a middle screw when deeper than 35 cm).
-- Back panels are inset per row. Dividers are shortened by the back's thickness.
-- Doors are inset with a 2 mm gap, use 35 mm cup hinges and push-to-open latches.
-- Base options: recessed plinth, steel legs, or none. An anti-tip wall kit is always included.
+Designed so a non-carpenter can build it in about an hour with a screwdriver and a mallet.
+
+- **Board:** 18 mm. Sides run full height; bottom, shelves and top sit between them.
+- **Side to shelf joint:** 2 × Ø8 dowels and 1–2 Minifix 15 cam locks. The cam sits on the shelf's underside and the bolt in the side, so no screw heads show on the outside.
+- **Dividers:** these stand between shelves on Ø8 dowels only. They're held in place once the shelf above is locked, and screwed through the back.
+- **Back:** a single overlay back (split on a shelf line if taller than a sheet) is screwed to every shelf, side and divider. This keeps the unit square and stops it racking sideways. All carcass parts are shallower by the back's thickness, so the outer depth stays as designed. The screw holes are pre-drilled, so the back doubles as a template.
+- **Doors:** inset, with 35 mm clip-on cup hinges (plate on the left wall of the bay) and push-to-open latches.
+- **Base:** a glued plinth frame with angle brackets, steel legs, or none. An anti-tip wall kit always ships.
+- **"Made for you" orders:** we fit the dowels, cam bolts, cams and hinge cups before shipping. The customer pushes, turns and screws.
+- **Assembly order:** face-down on a blanket (all front edges flush), left side, then bottom, dividers and shelves upward, then the right side. Turn the cams, screw on the back, fit the base, stand it up and fix it to the wall.
 
 ## Before going live
 
@@ -42,7 +47,7 @@ It deploys as-is to GitHub Pages, Netlify, Cloudflare Pages and similar hosts.
 - [ ] Connect payment for the file package: set `checkoutUrl` to a Stripe Payment Link (or similar). Until then the export runs in demo mode and is free.
 - [ ] To make the export truly paid, move file generation server-side, or deliver the ZIP from the payment success page. Client-side code can always be bypassed.
 - [ ] Replace the mailto/WhatsApp order hand-off with a form backend (e.g. Formspree, a Cloudflare Worker, or a small API) that stores orders.
-- [ ] Have your workshop verify a cut list and drilling map on a test build.
+- [ ] Have your workshop verify a cut list and drilling map on a test build, including the Minifix distance (34 mm) and the hinge plate set-back for your hinge brand.
 - [ ] Add a Montenegrin (ME) language version.
 
 ## Ideas for later

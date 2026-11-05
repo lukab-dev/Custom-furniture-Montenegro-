@@ -59,21 +59,29 @@
 
         <div class="view is-active" id="view-design">
           <div class="preview" id="preview"></div>
-          <p class="hint"><span class="dot"></span>Tap a compartment to add or remove a door.</p>
+          <p class="hint"><span class="dot"></span>Tap a compartment to add or remove a door. Drag the round handles to resize.</p>
         </div>
         <div class="view" id="view-cutlist"></div>
         <div class="view" id="view-sheets"></div>
 
         <ul class="warnings" id="warnings"></ul>
+
+        <div class="ctrl-tabs" id="ctrl-tabs" role="tablist" aria-label="Design options">
+          <button type="button" data-group="style" class="is-on">Style</button>
+          <button type="button" data-group="size">Size</button>
+          <button type="button" data-group="material">Material</button>
+          <button type="button" data-group="details">Details</button>
+          <button type="button" data-group="price">Price</button>
+        </div>
       </div>
 
       <aside class="panel">
-        <div class="group">
+        <div class="group" data-group="style">
           <h2 class="group-title">Style</h2>
           <div class="styles" id="styles"></div>
         </div>
 
-        <div class="group">
+        <div class="group" data-group="size">
           <h2 class="group-title">Size</h2>
           <div class="field">
             <label for="width">Width</label>
@@ -98,7 +106,7 @@
           <button class="btn btn-ghost btn-small shuffle" id="shuffle" type="button" hidden>↻ Shuffle pattern</button>
         </div>
 
-        <div class="group">
+        <div class="group" data-group="material">
           <h2 class="group-title">Material</h2>
           <div class="seg seg-wide" id="material"></div>
           <p class="note" id="material-desc"></p>
@@ -106,7 +114,7 @@
           <p class="note" id="color-name"></p>
         </div>
 
-        <div class="group">
+        <div class="group" data-group="details">
           <h2 class="group-title">Details</h2>
           <label class="switch"><input type="checkbox" id="back"><span>Back panels</span></label>
           <div class="field">
@@ -120,7 +128,7 @@
           <button class="link" id="clear-doors" type="button">Remove all doors</button>
         </div>
 
-        <div class="group price-card">
+        <div class="group price-card" data-group="price">
           <div class="option">
             <div>
               <h3>Build it yourself</h3>
@@ -164,7 +172,7 @@
       <ol class="steps">
         <li><span class="step-n">01</span><h3>Design</h3><p>Choose a style and adjust width, height, depth, rows and density. Add doors where you want them. The price updates live.</p></li>
         <li><span class="step-n">02</span><h3>Cut &amp; drill</h3><p>Your design becomes a precise cut list and drilling map. We order the boards and machine every panel on CNC.</p></li>
-        <li><span class="step-n">03</span><h3>Quality check</h3><p>Each part is measured, edge-checked and labelled with its ID, then test-fitted before it is packed.</p></li>
+        <li><span class="step-n">03</span><h3>Check &amp; pre-fit</h3><p>Each part is measured, labelled with its ID and an arrow to its front edge. Dowels, cam bolts and hinges are fitted before packing.</p></li>
         <li><span class="step-n">04</span><h3>Deliver &amp; assemble</h3><p>We bring it to your door anywhere in Montenegro, and can assemble it and fix it to the wall.</p></li>
       </ol>
     </section>
@@ -206,6 +214,7 @@
       <details><summary>Can I take the cut files to my own carpenter?</summary><p>Yes, that's what they're for. The CSV opens in Excel and imports into most panel-saw optimisers. The drilling map gives every hole relative to the part's front edge.</p></details>
       <details><summary>How accurate is the online price?</summary><p>It's calculated from the actual sheets, cut length, holes and hardware your design needs. We confirm the final price before you pay. It only changes if something in the design has to change.</p></details>
       <details><summary>How long does it take?</summary><p>Usually 2–3 weeks: about a week for boards and machining, a few days for checking and packing, then delivery on a date that suits you.</p></details>
+      <details><summary>How hard is it to assemble?</summary><p>About an hour for two people, with a screwdriver and a rubber mallet. The hardware comes already fitted. You build the shelf face-down on the floor so every front edge lines up: push the shelves and dividers onto their dowels, turn each cam lock a quarter turn, then screw on the back, which comes pre-drilled so the holes show you where the shelves are. No screw heads show on the outside.</p></details>
       <details><summary>Is it safe for tall shelves?</summary><p>Every order includes an anti-tip wall bracket kit. If we assemble, we fix it to the wall for you.</p></details>
       <details><summary>Do you deliver outside Montenegro?</summary><p>Not yet. Cut files work anywhere, though.</p></details>
     </section>
@@ -255,6 +264,12 @@
       </div>
     </form>
   </dialog>
+
+  <div class="mbar" id="mbar" aria-hidden="true">
+    <div class="mbar-price"><small id="mbar-asm">Delivered</small><strong>€<span id="mbar-total"></span></strong></div>
+    <button class="btn btn-ghost btn-small" type="button" id="mbar-files"><span>Files €<span id="mbar-files-price"></span></span></button>
+    <button class="btn btn-dark btn-small" type="button" id="mbar-order">Order</button>
+  </div>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 

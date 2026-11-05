@@ -95,6 +95,23 @@
       }));
     }
 
+    // Resize handles (drag to change width / height)
+    if (opts.interactive) {
+      const r = Math.max(W, H) * 0.03;
+      const handle = (k, cx, cy) => {
+        const a = r * 0.55, b = r * 0.15, s2 = r * 0.33;
+        const tri = k === 'w'
+          ? [[[cx - a, cy], [cx - b, cy - s2], [cx - b, cy + s2]], [[cx + a, cy], [cx + b, cy - s2], [cx + b, cy + s2]]]
+          : [[[cx, cy - a], [cx - s2, cy - b], [cx + s2, cy - b]], [[cx, cy + a], [cx - s2, cy + b], [cx + s2, cy + b]]];
+        out.push(`<g class="handle" data-handle="${k}"><title>Drag to change ${k === 'w' ? 'width' : 'height'}</title>` +
+          `<circle cx="${n1(cx)}" cy="${n1(cy)}" r="${n1(r * 2)}" fill="transparent"/>` +
+          `<circle cx="${n1(cx)}" cy="${n1(cy)}" r="${n1(r)}" fill="#fff" stroke="#1f1e1b" stroke-width="${n1(r * 0.1)}"/>` +
+          tri.map(q => `<polygon points="${pts(q)}" fill="#1f1e1b"/>`).join('') + '</g>');
+      };
+      handle('w', W, Y(base + (H - base) / 2));
+      handle('h', W / 2, Y(H));
+    }
+
     // Part labels (technical drawing)
     if (opts.labels && cut) {
       const fs = Math.max(22, Math.min(W, H) * 0.028);

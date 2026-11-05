@@ -15,6 +15,7 @@
 }
 
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 html { scroll-behavior: smooth; }
 body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.55 var(--font); -webkit-font-smoothing: antialiased; }
 a { color: inherit; }
@@ -209,18 +210,70 @@ select { width: 100%; padding: 10px 12px; border: 1px solid #d6cfc2; border-radi
 
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
+/* drag handles */
+.shelf-svg .handle { cursor: ew-resize; touch-action: none; }
+.shelf-svg .handle[data-handle=h] { cursor: ns-resize; }
+.preview.dragging, .preview.dragging * { cursor: grabbing !important; user-select: none; }
+
+/* mobile-only controls (hidden on desktop) */
+.ctrl-tabs, .mbar { display: none; }
+
 /* ---------- responsive ---------- */
 @media (max-width: 1020px) {
-  .configurator { grid-template-columns: 1fr; }
-  .stage { position: static; }
+  /* App-like configurator: preview pinned on top, one option group at a time below it,
+     price + order pinned to the bottom. Adjust and see the result without scrolling. */
+  .site-header { position: relative; }   /* give the pinned preview the full height */
+  .configurator { display: block; padding: 0 0 calc(92px + env(safe-area-inset-bottom)); scroll-margin-top: 0; }
+  .stage {
+    position: sticky; top: 0; z-index: 15;
+    border-radius: 0 0 20px 20px; border-top: 0; border-left: 0; border-right: 0;
+    padding: 8px 12px 10px; margin-bottom: 14px;
+    box-shadow: 0 10px 24px rgba(31, 30, 27, .10);
+  }
+  .stage-top { flex-wrap: nowrap; }
+  .tab { padding: 6px 12px; font-size: 13px; }
+  .readout { font-size: 12px; white-space: nowrap; }
+  .view { padding-top: 8px; }
+  .preview { height: clamp(180px, 32svh, 420px); aspect-ratio: auto; padding: 2px; }
+  #view-cutlist, #view-sheets { max-height: clamp(180px, 32svh, 420px); }
+  .hint { display: none; }
+  .warnings { margin-top: 6px; }
+  .warnings li { font-size: 12px; padding: 5px 10px; line-height: 1.35; }
+  .warnings li + li { display: none; }
+  .ctrl-tabs { display: flex; gap: 6px; margin-top: 8px; overflow-x: auto; scrollbar-width: none; }
+  .ctrl-tabs::-webkit-scrollbar { display: none; }
+  .ctrl-tabs button { flex: 1 0 auto; padding: 7px 10px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); font-size: 14px; font-weight: 500; color: var(--muted); cursor: pointer; }
+  .ctrl-tabs button.is-on { background: var(--ink); border-color: var(--ink); color: #fff; }
+  .panel { padding: 0 12px; }
+  .panel .group { display: none; }
+  .panel .group.is-current { display: block; }
+  .panel .group-title { display: none; }
+  .styles { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+  .style-card { padding: 6px; }
+  .style-desc { display: none; }
+  .mbar {
+    display: flex; align-items: center; gap: 8px;
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 30;
+    padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+    background: color-mix(in srgb, var(--surface) 94%, transparent); backdrop-filter: blur(10px);
+    border-top: 1px solid var(--line);
+    transform: translateY(110%); transition: transform .2s ease;
+  }
+  .mbar.show { transform: none; }
+  .mbar .btn { white-space: nowrap; }
+  .mbar-price { margin-right: auto; display: grid; line-height: 1.15; }
+  .mbar-price small { color: var(--muted); font-size: 12px; }
+  .mbar-price strong { font: 600 24px/1.1 var(--display); font-variant-numeric: tabular-nums; }
   .steps { grid-template-columns: 1fr 1fr; }
 }
 @media (max-width: 760px) {
   .nav { display: none; }
   .site-header .btn { margin-left: auto; }
+  .styles { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .style-name { font-size: 12px; text-align: center; }
+  .style-thumb { padding: 4px; margin-bottom: 4px; }
   .hero { grid-template-columns: 1fr; }
   .hero-visual { order: -1; }
-  .preview { height: auto; aspect-ratio: 5 / 4; }
   .stats { grid-template-columns: 1fr 1fr; }
   .plans { grid-template-columns: 1fr; }
   .steps { grid-template-columns: 1fr; }

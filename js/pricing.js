@@ -13,7 +13,7 @@
     const cutting = cut.cutMeters * P.cutPerMeter + (design.material.edgeBanding ? cut.edgeMeters * (design.material.edgePerM || 1.4) : 0);
     const drilling = cut.holes * P.drillPerHole;
     const hardware = cut.hardware.reduce((s, h) => s + h.qty * (P.hardware[h.id] || 0), 0);
-    const handling = cut.parts.length * P.handlingPerPart + P.qcBase + cut.parts.length * P.qcPerPart;
+    const handling = cut.parts.length * P.handlingPerPart + P.qcBase + cut.parts.length * P.qcPerPart + cut.preinstalled * P.preinstallPerFitting;
 
     const lines = [
       { label: `Boards (${sheets} sheet${sheets === 1 ? '' : 's'})`, value: gross(materials) },
@@ -21,7 +21,7 @@
       { label: design.material.edgeBanding ? 'Cutting & edge banding' : 'Precision cutting', value: gross(cutting) },
       { label: `Drilling (${cut.holes} holes)`, value: gross(drilling) },
       { label: 'Hardware', value: gross(hardware) },
-      { label: 'Labelling, QC & packing', value: gross(handling) }
+      { label: 'Pre-fitted hardware, labels, QC & packing', value: gross(handling) }
     ].filter(Boolean);
 
     const made = Math.round(lines.reduce((s, l) => s + l.value, 0));
