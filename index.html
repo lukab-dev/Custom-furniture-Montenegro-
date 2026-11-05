@@ -40,7 +40,7 @@
         <ul class="hero-facts">
           <li><strong>CNC</strong><span>cut &amp; drilled panels</span></li>
           <li><strong>2–3 weeks</strong><span>from order to your door</span></li>
-          <li><strong>€<span id="hero-export-price">29</span></strong><span>for DIY cut files</span></li>
+          <li><strong id="hero-export-price">Free</strong><span>DIY cut files</span></li>
         </ul>
       </div>
       <div class="hero-visual" id="hero-visual" aria-hidden="true"></div>
@@ -184,7 +184,7 @@
               <h3>Build it yourself</h3>
               <p class="note">Cut list, drilling map, sheet layouts &amp; hardware list. Take them to any panel shop.</p>
             </div>
-            <div class="option-price">€<span id="price-export"></span></div>
+            <div class="option-price" id="price-export"></div>
           </div>
           <button class="btn btn-ghost btn-block" id="btn-export" type="button">Get cut files</button>
 
@@ -233,7 +233,7 @@
       <div class="plans">
         <article class="plan">
           <h3>Cut files</h3>
-          <p class="plan-price">€<span id="plan-export-price">29</span> <small>per design</small></p>
+          <p class="plan-price"><span id="plan-export-price">Free</span> <small>per design</small></p>
           <ul>
             <li>Cut list (CSV) with grain direction &amp; edging</li>
             <li>Drilling map for every hole</li>
@@ -290,8 +290,8 @@
         <li><b>labels.html</b> part stickers with IDs and FRONT arrows</li>
         <li><b>project.json</b> re-open this design any time</li>
       </ul>
-      <p class="demo-note" id="demo-note" hidden>Demo mode: payment isn't connected yet, so the download is free.</p>
-      <button class="btn btn-dark btn-block" id="btn-pay" value="default" type="button">Pay €<span id="x-price"></span> &amp; download</button>
+      <p class="demo-note" id="demo-note" hidden>Free during our test phase. No payment needed.</p>
+      <button class="btn btn-dark btn-block" id="btn-pay" value="default" type="button"><span id="x-price">Download</span></button>
     </form>
   </dialog>
 
@@ -318,7 +318,7 @@
   </dialog>
 
   <div class="mbar" id="mbar" aria-hidden="true">
-    <button class="btn btn-ghost" type="button" id="mbar-files"><span>Files €<span id="mbar-files-price"></span></span></button>
+    <button class="btn btn-ghost" type="button" id="mbar-files"><span>Files · <span id="mbar-files-price"></span></span></button>
     <button class="btn btn-dark" type="button" id="mbar-order"><span>Order · €<span id="mbar-total"></span></span></button>
   </div>
 

@@ -44,6 +44,7 @@ This follows the same principle as Tylko's system: full-width shelves, short ver
 
 - [ ] **Calibrate every price in `js/config.js`** against real supplier and CNC quotes. The current numbers are placeholders.
 - [ ] Set `contactEmail`, `whatsapp` and the domain.
+- [ ] The file package is **free during the test phase** (`exportPackage: 0`). To charge again, set a price (e.g. 29).
 - [ ] Connect payment for the file package: set `checkoutUrl` to a Stripe Payment Link (or similar). Until then the export runs in demo mode and is free.
 - [ ] To make the export truly paid, move file generation server-side, or deliver the ZIP from the payment success page. Client-side code can always be bypassed.
 - [ ] Replace the mailto/WhatsApp order hand-off with a form backend (e.g. Formspree, a Cloudflare Worker, or a small API) that stores orders.

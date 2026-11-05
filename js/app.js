@@ -174,8 +174,8 @@
     pv.addEventListener('pointercancel', endDrag);
 
     const mail = $('#footer-mail'); mail.textContent = C.contactEmail; mail.href = 'mailto:' + C.contactEmail;
-    $('#hero-export-price').textContent = C.pricing.exportPackage;
-    $('#plan-export-price').textContent = C.pricing.exportPackage;
+    $('#hero-export-price').textContent = money(C.pricing.exportPackage);
+    $('#plan-export-price').textContent = money(C.pricing.exportPackage);
   }
 
   function headerHeight() {
@@ -190,6 +190,8 @@
     $$('#parts-tabs [data-v]').forEach(b => b.classList.toggle('is-active', b.dataset.v === v));
     $('#parts-body').innerHTML = $('#view-' + v).innerHTML;
   }
+
+  function money(v) { return v ? '€' + v : 'Free'; }
 
   function seg(sel, onPick) {
     $(sel).addEventListener('click', e => { const b = e.target.closest('[data-v]'); if (b) onPick(b.dataset.v); });
@@ -236,13 +238,13 @@
     renderCutlist(design, cut, nest);
     renderSheets(nest);
 
-    $('#price-export').textContent = price.exportPackage;
+    $('#price-export').textContent = money(price.exportPackage);
     $('#price-made').textContent = price.made;
     $('#breakdown').innerHTML = price.lines.map(l => `<dt>${l.label}</dt><dd>€${l.value}</dd>`).join('');
     $('#assembly-price').textContent = '+€' + Math.round(C.pricing.assembly.base + cut.parts.length * C.pricing.assembly.perPart);
     $('#price-total').textContent = price.total;
     $('#mbar-total').textContent = price.total;
-    $('#mbar-files-price').textContent = price.exportPackage;
+    $('#mbar-files-price').textContent = money(price.exportPackage);
     $('#pv-total').textContent = price.total;
     $('#pv-sub').textContent = `${s.width} × ${s.height} × ${s.depth} cm · ${s.assembly ? 'delivered & assembled' : 'delivered'}`;
     $$('.step').forEach(b => {
@@ -287,13 +289,15 @@
     $('#x-parts').textContent = `${cut.parts.length} panels`;
     $('#x-holes').textContent = `${cut.holes} holes`;
     $('#x-sheets').textContent = `${nest.reduce((n, g) => n + g.sheets.length, 0)} sheet layouts`;
-    $('#x-price').textContent = price.exportPackage;
-    $('#demo-note').hidden = !!C.checkoutUrl;
+    const free = !price.exportPackage;
+    $('#x-price').textContent = free ? 'Download for free' : `Pay €${price.exportPackage} & download`;
+    $('#demo-note').hidden = !free && !!C.checkoutUrl;
+    if (!free && !C.checkoutUrl) $('#demo-note').textContent = 'Demo mode: payment isn\'t connected yet, so the download is free.';
     $('#dlg-export').showModal();
   }
 
   async function pay() {
-    if (C.checkoutUrl) {
+    if (C.checkoutUrl && C.pricing.exportPackage) {
       // Real flow: send the customer to checkout; the success page re-opens the design via #d=… and calls downloadPackage.
       localStorage.setItem('mjera-pending-export', shareUrl());
       location.href = C.checkoutUrl + (C.checkoutUrl.includes('?') ? '&' : '?') + 'client_reference_id=' + encodeURIComponent(encode(state).slice(0, 200));

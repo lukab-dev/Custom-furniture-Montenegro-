@@ -81,7 +81,7 @@ MJERA.config = {
   ],
 
   pricing: {
-    exportPackage: 29,       // flat price for the DIY file package (EUR)
+    exportPackage: 0,        // flat price for the DIY file package (EUR). 0 = free (test phase); normal price was 29
     cutPerMeter: 0.9,        // panel saw / CNC cutting
     drillPerHole: 0.12,
     handlingPerPart: 1.2,    // labelling, sorting
