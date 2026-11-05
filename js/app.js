@@ -103,6 +103,10 @@
       $$('.view').forEach(v => v.classList.toggle('is-active', v.id === 'view-' + t.dataset.view));
     }));
 
+    document.addEventListener('click', e => {
+      const b = e.target.closest('[data-open]'); if (!b) return;
+      MJERA.manual.open(b.dataset.open === 'labels' ? MJERA.manual.labelsHtml(model) : MJERA.manual.manualHtml(model));
+    });
     $('#btn-export').addEventListener('click', openExport);
     $('#btn-pay').addEventListener('click', pay);
     $('#btn-order').addEventListener('click', openOrder);
@@ -267,7 +271,8 @@
       </table></div>
       <h3 class="sub">Hardware</h3>
       <div class="table-wrap"><table class="cut-table"><tbody>${cut.hardware.map(h => `<tr><td>${h.name}</td><td class="num">${h.qty}</td></tr>`).join('')}</tbody></table></div>
-      <p class="note">Length (L) runs along the grain${cut.grain ? ' — grain direction is fixed for this material' : ''}. Full drilling coordinates are in the cut-file package.</p>`;
+      <p class="note">Length (L) runs along the grain${cut.grain ? ' — grain direction is fixed for this material' : ''}. Full drilling coordinates are in the cut-file package.</p>
+      <p><button type="button" class="btn btn-ghost btn-small" data-open="manual">Open assembly manual</button> <button type="button" class="btn btn-ghost btn-small" data-open="labels">Part labels</button></p>`;
   }
 
   function renderSheets(nest) {

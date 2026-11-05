@@ -93,10 +93,9 @@
       const fill = ply ? `url(#${P}${vertical ? 'plyV' : 'plyH'})` : c;
       out.push(`<rect x="${n1(x)}" y="${n1(Y(y + hh))}" width="${n1(w)}" height="${n1(hh)}" fill="${fill}"/>`);
     };
-    for (let i = 0; i <= R; i++) panel(t, by(i * (h + t)), W - 2 * t, t, false);
-    rows.forEach(row => row.dividers.forEach(dx => panel(dx, by(row.y0), t, row.y1 - row.y0, true)));
-    panel(0, base, t, H - base, true);
-    panel(W - t, base, t, H - base, true);
+    // Horizontals run the full width; ends and dividers are separate per row
+    rows.forEach(row => [0, ...row.dividers, W - t].forEach(dx => panel(dx, by(row.y0), t, row.y1 - row.y0, true)));
+    for (let i = 0; i <= R; i++) panel(0, by(i * (h + t)), W, t, false);
     // subtle outline
     out.push(`<rect x="0" y="${Y(H)}" width="${W}" height="${H - base}" fill="none" stroke="${shade(c, -0.35)}" stroke-opacity=".35" stroke-width="1.2"/>`);
 
@@ -129,9 +128,8 @@
       const fs = Math.max(22, Math.min(W, H) * 0.028);
       const label = (x, y, txt, rot) => out.push(`<text x="${n1(x)}" y="${n1(Y(y))}" font-size="${n1(fs)}" font-family="Inter,Arial,sans-serif" font-weight="600" fill="#c0392b" text-anchor="middle" dominant-baseline="middle"${rot ? ` transform="rotate(-90 ${n1(x)} ${n1(Y(y))})"` : ''}>${txt}</text>`);
       cut.parts.forEach(p => {
-        if (p.kind === 'side') label(p.id === 'S1' ? t / 2 : W - t / 2, base + (H - base) / 2, p.id, true);
         if (p.kind === 'horizontal') label(W / 2, by(p.level * (h + t) + t / 2) + fs * 0.6, p.id);
-        if (p.kind === 'divider') label(p.x + t / 2, by(rows[p.row].y0 + (rows[p.row].y1 - rows[p.row].y0) / 2), p.id, true);
+        if (p.kind === 'divider' || p.kind === 'end') label(p.x + t / 2, by(rows[p.row].y0 + (rows[p.row].y1 - rows[p.row].y0) / 2), p.id, true);
         if (p.kind === 'door') { const cl = rows.flatMap(r => r.cells).find(x => x.key === p.cell); label((cl.x0 + cl.x1) / 2, by((cl.y0 + cl.y1) / 2), p.id); }
       });
     }
@@ -152,7 +150,7 @@
     return out.join('');
   }
 
-  const PART_COLORS = { side: '#d8c3a0', horizontal: '#c9d6c3', divider: '#c7d3de', door: '#e3c6bd', back: '#ddd6ea', plinth: '#d6d2c8' };
+  const PART_COLORS = { end: '#d8c3a0', side: '#d8c3a0', horizontal: '#c9d6c3', divider: '#c7d3de', door: '#e3c6bd', back: '#ddd6ea', brace: '#ddd6ea', plinth: '#d6d2c8' };
 
   function sheet(s, index, label) {
     const [SL, SW] = s.size;

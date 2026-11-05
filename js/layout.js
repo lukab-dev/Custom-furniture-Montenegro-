@@ -55,7 +55,7 @@
     const t = C.build.t;
     const material = C.materials.find(m => m.id === state.material) || C.materials[0];
     const color = material.colors.find(c => c.id === state.color) || material.colors[0];
-    const backT = state.back ? material.back.t : 0;
+    const backT = material.back.t;           // full back, or end braces when backs are off
 
     const W = state.width * 10;
     const H = state.height * 10;
@@ -97,8 +97,7 @@
     const maxSpan = Math.max(...rows.flatMap(r => r.cells.map(c => c.w)));
     if (maxSpan > C.limits.maxSpan) warnings.push(`Widest bay is ${Math.round(maxSpan / 10)} cm — shelves over ${C.limits.maxSpan / 10} cm may sag under books. Increase density.`);
     if (W > material.sheet[0] - 2 * C.build.trim) warnings.push(`Width exceeds a single ${material.short} sheet. Reduce width or split into two units.`);
-    if (Hb > material.sheet[0] - 2 * C.build.trim) warnings.push(`Height exceeds a single ${material.short} sheet length.`);
-    if (!state.back && H > 1200) warnings.push('Without back panels a unit this tall relies on the wall fixing alone to stay square. We recommend back panels.');
+    if (!state.back && H > 1600) warnings.push('Without back panels the shelf is braced only at its ends. For a unit this tall we recommend back panels.');
     const smallBay = Math.min(...rows.flatMap(r => r.cells.map(c => c.w)));
     if (smallBay < 120) warnings.push(`Some bays are only ${Math.round(smallBay / 10)} cm wide. Reduce density.`);
 

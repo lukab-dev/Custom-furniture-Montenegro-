@@ -29,16 +29,16 @@ It deploys as-is to GitHub Pages, Netlify, Cloudflare Pages and similar hosts.
 
 ## Construction model
 
-Designed so a non-carpenter can build it in about an hour with a screwdriver and a mallet.
+This follows the same principle as Tylko's system: full-width shelves, short verticals per row, built face-down row by row and labelled parts. It uses standard hardware that any local CNC/panel shop can drill.
 
-- **Board:** 18 mm. Sides run full height; bottom, shelves and top sit between them.
-- **Side to shelf joint:** 2 × Ø8 dowels and 1–2 Minifix 15 cam locks. The cam sits on the shelf's underside and the bolt in the side, so no screw heads show on the outside.
-- **Dividers:** these stand between shelves on Ø8 dowels only. They're held in place once the shelf above is locked, and screwed through the back.
-- **Back:** a single overlay back (split on a shelf line if taller than a sheet) is screwed to every shelf, side and divider. This keeps the unit square and stops it racking sideways. All carcass parts are shallower by the back's thickness, so the outer depth stays as designed. The screw holes are pre-drilled, so the back doubles as a template.
+- **Horizontals:** bottom, shelves and top run the full width in one piece. The longest part is the width, so units can be up to ceiling height.
+- **Verticals per row:** two end panels plus the dividers, standing between two shelves. End panels use 2 × Ø8 dowels and a Minifix 15 cam lock per joint (cam on the inside face, bolt in the shelf). Dividers use dowels only and are held captive between the locked shelves.
+- **Back:** an overlay back screwed to every shelf and panel through pre-drilled holes. It's split on a shelf line when taller than a sheet. Without backs, every row gets an end brace on each side to stop racking.
 - **Doors:** inset, with 35 mm clip-on cup hinges (plate on the left wall of the bay) and push-to-open latches.
-- **Base:** a glued plinth frame with angle brackets, steel legs, or none. An anti-tip wall kit always ships.
-- **"Made for you" orders:** we fit the dowels, cam bolts, cams and hinge cups before shipping. The customer pushes, turns and screws.
-- **Assembly order:** face-down on a blanket (all front edges flush), left side, then bottom, dividers and shelves upward, then the right side. Turn the cams, screw on the back, fit the base, stand it up and fix it to the wall.
+- **Base and wall fixing:** plinth (glued frame with angle brackets), steel legs, or none. Wall L-brackets go on top of the top shelf (2, or 3 over 160 cm).
+- **Packages:** #1 shelves, #2 ends & dividers, #3 back, #4 doors, #5 base, #6 hardware.
+- **Labels:** each part gets a sticker with its ID, package, ▼ FRONT edge and ◀ LEFT/BOTTOM end (`labels.html`).
+- **Manual:** each design generates its own step-by-step manual (`assembly-manual.html`). It covers the bottom, then for every row the ends and dividers, the next shelf and the cams, followed by the back, the base, standing it up and wall fixing, then the doors. Drawings show the shelf as you see it while building: face-down, bottom towards the wall.
 
 ## Before going live
 

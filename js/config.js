@@ -94,7 +94,7 @@ MJERA.config = {
       pushLatch: 3.5,
       leg: 6,
       bracket: 0.4,
-      wallFix: 3             // anti-tip wall bracket kit
+      wallFix: 1.5           // L-bracket + screws + plug, per bracket
     },
     preinstallPerFitting: 0.12, // fitting dowels, bolts, cams, hinges before shipping
     margin: 1.3,             // workshop margin on cost
